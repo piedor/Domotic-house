@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GateControl">
+
+
+  <Button
+      android:id="@+id/home_gate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="36dp"
+      android:layout_marginTop="340dp"
+      android:text="HOME"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <ImageButton
+      android:id="@+id/imageButton"
+      android:layout_width="239dp"
+      android:layout_height="198dp"
+
+      app:srcCompat="@android:drawable/ic_media_pause"
+      tools:layout_editor_absoluteX="83dp"
+      tools:layout_editor_absoluteY="76dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
