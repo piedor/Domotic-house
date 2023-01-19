@@ -4,74 +4,122 @@ Digitally it takes the desired temperature from the database and activate the
 right number of power to reach that temperature (power=leds).
 We can control the value of the desired temperature by the button Up/Down
 and turn on or off the thermostat from button On/Off
+ */
+ 
+#include "LiquidCrystal_I2C.h"
+
+#define but_O_F 28
+#define but_Do 30
+#define but_Up 12
+#define but_MODE 29
+LiquidCrystal_I2C lcd(0x3F,16,2);  //Set dell'indirizzo dell'LCD con 16 caratteri e 2 righe
+
+/*SCHEMINO DELL'LCD PER BESTEMMIARE MENO :))
+      0 1 2 3 4 5 6 7 8 9 A B C D E F
+    0 T E M P : - - . - - X P O W E R
+    1 S E T  : X - - . - - X X - - - X
 */
-#undef but_O_F
-#define but_O_F
-#undef but_Do
-#define but_Do
-#undef but_Up
-#define but_Up
-#undef LED_therm1
-#define LED_therm1
-#undef LED_therm2
-#define LED_therm2
-#undef LED_therm3
-#define LED_therm3
-#undef SENS_themp
-#define SENS_themp
 
 
 const int butUpPin = but_Up;     // the number of the pushbutton pin
 const int butDoPin = but_Do;     // the number of the pushbutton pin
 const int butOFPin = but_O_F;     // the number of the pushbutton pin
-const int led1Pin =  LED_therm1;      // the number of the LED pin
-const int led2Pin =  LED_therm2;      // the number of the LED pin
-const int led3Pin =  LED_therm3;      // the number of the LED pin
 
 int but_Up_State = 0;         // variable for reading the pushbutton status for button up
 int but_Do_State = 0;         // variable for reading the pushbutton status for button down
 int but_O_F_State = 0;         // variable for reading the pushbutton status  for on/f
 
-int valuesens_TEMP;         //data of the temp from the sens 
-int valueimp_TEMP;          //data of the imposted temp      
-String therm_acc;            //look if the term is active       
+int powerLevel; // (0,1,2,3) define the level power of the thermostat
+float valuesens_TEMP;         //data of the temp from the sens    lcd-value sens
+float valueimp_TEMP;          //data of the imposted temp      lcd- value imp
+String therm_acc;            //look if the term is active   lcd- on/off       
+String mode;     //acquire the mode (warm, cool)
 
+byte Snowflake[8] = {
+0b00000,
+0b00000,
+0b10101,
+0b01110,
+0b11011,
+0b01110,
+0b10101,
+0b00000,
+};
 
+byte Fire[8] = {
+0b00001,
+0b01000,
+0b10010,
+0b00110,
+0b01111,
+0b11111,
+0b11111,
+0b01010,
+};
 //function to define the level of the temperature of the term
 void therm_level(){
   //valuesens_TEMP=SENS_temp.readvalue();        //acquire the temp from the sens
   if( valueimp_TEMP>(valuesens_TEMP+5) ){
-    digitalWrite(led1Pin, HIGH);
-    digitalWrite(led2Pin, HIGH);
-    digitalWrite(led3Pin, HIGH);    
+    powerLevel=3;
   }
   if( valueimp_TEMP>(valuesens_TEMP+2) ){
-    digitalWrite(led1Pin, HIGH);
-    digitalWrite(led2Pin, HIGH);
-    digitalWrite(led3Pin, LOW);   
-  }
+    powerLevel=2;
+    }
   if( valueimp_TEMP>=(valuesens_TEMP-1) ){
-    digitalWrite(led1Pin, HIGH);
-    digitalWrite(led2Pin, LOW);
-    digitalWrite(led3Pin, LOW); }
-  if( valueimp_TEMP<(valuesens_TEMP-1) ){
-    digitalWrite(led1Pin, LOW);
-    digitalWrite(led2Pin, LOW);
-    digitalWrite(led3Pin, LOW);         
+    powerLevel=1;
+    }
+  if( valueimp_TEMP<(valuesens_TEMP-2) ){
+    powerLevel=0;
   }
 }
 
-void change_value(int t){
+void change_value(float t){
   valueimp_TEMP=valueimp_TEMP+t;                  // acquire the data from the database
   Serial1.println(valueimp_TEMP);                  // change the value to the new one
+}
+
+void lcdShow(){
+  if(therm_acc=="off"){
+    lcd.clear();
+    lcd.setCursor(0, 0);    //Funzione per decidere dove mettere il cursore (carattere(da 0 a 15), riga(0 o 1))
+    lcd.print("TEMP: ");  
+    lcd.setCursor(5,0);   //L'idea sarebbe mettere su 6 invece che 5, ma non so come far mostrare un solo numero dopo la virgola, quindi per il momento lascio così
+    lcd.print(String(valuesens_TEMP));
+    delay (1500);
+  }else{
+    byte x;
+    lcd.setCursor(0, 0);
+    lcd.print("TEMP:      POWER");
+    lcd.setCursor(0, 1);
+    lcd.print("SET :          ");
+    if (mode=="warm") x=Fire;
+      else x=Snowflakes;
+    switch (powerLevel){
+      case (0):{  lcd.setCursor(12, 1);
+                  lcd.print("   ");}
+      case (1):{  lcd.setCursor(12, 1);
+                  lcd.write(x);
+                  lcd.print("  ");}
+      case (2):{  lcd.write(x);
+                  lcd.write(x);
+                  lcd.print(" ");}
+      case (3):{  lcd.write(x);
+                  lcd.write(x);
+                  lcd.write(x);
+                  }
+      default: break;
+    }
+  }
 }
 
 void setupRegulator_therm() {
   valueimp_TEMP=Serial1.read();                  //acquire the data from the database     
   therm_acc=Serial1.read();
-  pinMode(LED_therm1, OUTPUT);         //initialize the led1 as output for low power
-  pinMode(LED_therm2, OUTPUT);         //initialize the led1 as output for medium power
-  pinMode(LED_therm3, OUTPUT);         //initialize the led1 as output for high power
+  
+  lcd.init();    //init the lcd
+  lcd.clear();   //clear the lcd screen
+  lcd.backlight();
+  
   pinMode(butOFPin, INPUT_PULLUP);     // initialize the pushbutton pin as an input for the On/Off command
   pinMode(butDoPin, INPUT_PULLUP);      // initialize the pushbutton pin as an input for the turn down command
   pinMode(butUpPin, INPUT_PULLUP);      // initialize the pushbutton pin as an input for the turn up command
@@ -96,7 +144,8 @@ if((but_O_F_State==LOW && therm_acc=="on") || (therm_acc=="go_off"))
     but_O_F_State=HIGH;
     delay(300);
   }
-Serial1.println();
+
+
 but_Up_State= digitalRead(but_Up);  // read the state of the button_Up value 
 but_Do_State= digitalRead(but_Do);  // read the state of the button_Do value 
 
@@ -113,15 +162,8 @@ if(but_Do_State==LOW) {
   delay(300);
 }
 
-if(therm_acc == "on"){
-    therm_value();           //call the regulator function
-  }
-  
-if(therm_acc == "off"){   //shutdown the sistyem
-    digitalWrite(LED_therm1, LOW);
-    digitalWrite(LED_therm2, LOW);
-    digitalWrite(LED_therm3, LOW);       
-  }
-  
+therm_level();
+lcdShow();
+ 
 delay(1000);
 }

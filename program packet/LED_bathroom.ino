@@ -5,11 +5,11 @@ then it changes the value on the same database;
 if the button is pressed change the value of the database to on 
 if the value was off and viceversa.
 */
-#define but_O_F
-#define LED_bathroom 35 //port 6.7
+#define but_BATH 25
+#define LED_bathroom 3 
 
-const int buttonPin = but_O_F;     // the number of the pushbutton pin
-const int ledPin =  LED_bathroom;      // the number of the LED pin
+int buttonPin = but_BATH;     // the number of the pushbutton pin
+int ledPin =  LED_bathroom;      // the number of the LED pin
 int butState = 0;         // variable for reading the pushbutton status
 
 String value_LBa;    
@@ -22,8 +22,8 @@ void setupLED_bathroom() {
 }
 //the loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_bathroom() {
-  butState=digitalWrite(but_O_F);
-//  value_LBa=getValue();  
+  butState=digitalRead(but_BATH);
+//  value_LBa=getLBaValue();  
 if((value_LBa== "go_on")||(butState==LOW && value_LBa=="off"))
   {
     value_LBa="on";
