@@ -197,6 +197,7 @@ void setup() {
   setupLED_bathroom();
   setupLED_bedroom();
   setupLED_studio();
+  setupLED_outdoor();
   setupGate_control();
   setupRegulator_therm();
   
@@ -229,6 +230,7 @@ void loop() {
   loopLED_bathroom();
   loopLED_bedroom();
   loopLED_studio();
+  loopLED_outdoor();
   loopGate_control();
   loopRegulator_therm();
 
