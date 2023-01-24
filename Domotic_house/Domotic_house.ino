@@ -1,5 +1,7 @@
 #include <ESP8266_01.h>
 
+#define PIN_ESP_RX 23
+#define PIN_ESP_TX 17
 #define SSID "ssid"
 #define PASSWORD "password"
 // ID of google script 
@@ -18,6 +20,9 @@
 #define I_TEMP_INDOOR 8
 #define I_GATE 9
 #define I_DATE 10
+
+unsigned long currentMillis;
+unsigned long lastMillis;
 
 ESP8266_01 esp;
 // commands array contains the 11 values
@@ -96,56 +101,12 @@ float getThermSet(){
   return(commands[I_T_SET].toFloat());
 }
 
-float getTempIndoor(){
-  return(commands[I_TEMP_INDOOR].toFloat());
-}
-
 String getGate(){
   return(commands[I_GATE]);
 }
 
 String getDate(){
   return(commands[I_DATE]);
-}
-
-void setLedKitchen(String value){
-  commands[I_LED_KITCHEN] = value;
-}
-
-void setLedBathroom(String value){
-  commands[I_LED_BATHROOM] = value;
-}
-
-void setLedBedroom(String value){
-  commands[I_LED_BEDROOM] = value;
-}
-
-void setLedStudio(String value){
-  commands[I_LED_STUDIO] = value;
-}
-
-void setLedOutdoor(String value){
-  commands[I_LED_OUTDOOR] = value;
-}
-
-void setThermSwitch(String value){
-  commands[I_T_SWITCH] = value;
-}
-
-void setThermMode(String value){
-  commands[I_T_MODE] = value;
-}
-
-void setThermSet(float temp){
-  commands[I_T_SET] = temp;
-}
-
-void setTempIndoor(float temp){
-  commands[I_TEMP_INDOOR] = temp;
-}
-
-void setGate(String value){
-  commands[I_GATE] = value;
 }
 
 void sendDataSpreadsheet(){
@@ -163,25 +124,118 @@ void sendDataSpreadsheet(){
   }
 }
 
+void setLedKitchen(String value){
+  commands[I_LED_KITCHEN] = value;
+  sendDataSpreadsheet();
+}
+
+void setLedBathroom(String value){
+  commands[I_LED_BATHROOM] = value;
+  sendDataSpreadsheet();
+}
+
+void setLedBedroom(String value){
+  commands[I_LED_BEDROOM] = value;
+  sendDataSpreadsheet();
+}
+
+void setLedStudio(String value){
+  commands[I_LED_STUDIO] = value;
+  sendDataSpreadsheet();
+}
+
+void setLedOutdoor(String value){
+  commands[I_LED_OUTDOOR] = value;
+  sendDataSpreadsheet();
+}
+
+void setThermSwitch(String value){
+  commands[I_T_SWITCH] = value;
+  sendDataSpreadsheet();
+}
+
+void setThermMode(String value){
+  commands[I_T_MODE] = value;
+  sendDataSpreadsheet();
+}
+
+void setThermSet(float temp){
+  commands[I_T_SET] = temp;
+  sendDataSpreadsheet();
+}
+
+void setTempIndoor(float temp){
+  commands[I_TEMP_INDOOR] = temp;
+  sendDataSpreadsheet();
+}
+
+void setGate(String value){
+  commands[I_GATE] = value;
+  sendDataSpreadsheet();
+}
+
+void initSpreadsheet(){
+  // Set default commands to spreadsheet
+  commands[I_LED_KITCHEN] = "off";
+  commands[I_LED_BATHROOM] = "off";
+  commands[I_LED_BEDROOM] = "off";
+  commands[I_LED_STUDIO] = "off";
+  commands[I_LED_OUTDOOR] = "off";
+  commands[I_T_SWITCH] = "off";
+  commands[I_T_SET] = 0.0;
+  commands[I_T_MODE] = "warm";
+  commands[I_TEMP_INDOOR] = getTempIndoor();
+  commands[I_GATE] = "close";
+  sendDataSpreadsheet();
+}
+
 void setup() {
   Serial.begin(115200);
-  // ESP8266 connected to Serial1 (pin 3.2 and 3.3 in MSP432 board) 
-  Serial1.begin(115200);
+
+  // Various setup
+  setupLED_kitchen();
+  setupLED_bathroom();
+  setupLED_bedroom();
+  setupLED_studio();
+  setupGate_control();
+  setupRegulator_therm();
+  
+  // ESP8266 serial
+  Serial2.begin(115200, SERIAL_8N1, PIN_ESP_RX, PIN_ESP_TX);
+  
 
   // ESP8266_01(ESP82266 serial reference, default serial reference (for debugging), want debugging);
-  esp = ESP8266_01(Serial1, Serial, true);
+  esp = ESP8266_01(Serial2, Serial, true);
   // Set ESP8266 as station (can connect to WI-FI)
   esp.setAsStation();
+  // The ESP tries to reconnect to AP at the interval of 10 seconds for 100 times when disconnected
+  esp.setAutoReconnectWifi(10, 100);
   // Connect WI-FI
-  if(esp.isConnected().equals("")){
+  while(esp.isConnected().equals("")){
     esp.connectWifi(SSID, PASSWORD);
+    delay(500);
   }
   // As ESP8266 will only connect to one server (script.google.com) is not needed the multi connection support 
   esp.setSingleConnection();
+  // Set all commands in spreadsheet to default
+  initSpreadsheet();
+
+  lastMillis = millis();
 }
 
 void loop() {
-  getCommandsSpreadsheet();
-  delay(1000);
-// sendDataSpreadsheet("on", "off", "on", "off", "on", "off", "warm", 18.5, 17.4, "opening");
+  // Various loop
+  loopLED_kitchen();
+  loopLED_bathroom();
+  loopLED_bedroom();
+  loopLED_studio();
+  loopGate_control();
+  loopRegulator_therm();
+
+  // Check for commands remote timer
+  currentMillis = millis();
+  if(currentMillis - lastMillis > 1000){
+    getCommandsSpreadsheet();
+    lastMillis = millis();
+  }
 }
