@@ -49,20 +49,24 @@ void getCommandsSpreadsheet(){
   else{
     clearArrayCommands();
     // Get substring from 'userHtml' to end of response. Example of msg after: userHtml:\x22off;on;off;off;sens_on;on;cool;12.5;22.6;close;20/01/2023 13:50:08\x22,attributes:...</body></html>\r\n\r\n\r\n
-    String msg = response.substring(response.indexOf("$$") + 2, response.indexOf("%%"));
-    // Get values separated by ';'. Example of msg after: off;on;off;off;sens_on;on;cool;12.5;22.6;close;20/01/2023 13:50:08
-    // Split the values in commands array
-    int StringCount = 0;
-    while(msg.length() > 0){
-      int index = msg.indexOf(';');
-      if (index == -1) // No ; found
-      {
-        commands[StringCount++] = msg;
-        break;
-      }
-      else{
-        commands[StringCount++] = msg.substring(0, index);
-        msg = msg.substring(index+1);
+    int indexFirst = response.indexOf("$$");
+    int indexLast = response.indexOf("%%");
+    if(indexFirst >= 0 && indexLast >= 0){
+      String msg = response.substring(indexFirst + 2, indexLast);
+      // Get values separated by ';'. Example of msg after: off;on;off;off;sens_on;on;cool;12.5;22.6;close;20/01/2023 13:50:08
+      // Split the values in commands array
+      int StringCount = 0;
+      while(msg.length() > 0){
+        int index = msg.indexOf(';');
+        if (index == -1) // No ; found
+        {
+          commands[StringCount++] = msg;
+          break;
+        }
+        else{
+          commands[StringCount++] = msg.substring(0, index);
+          msg = msg.substring(index+1);
+        }
       }
     }
   }

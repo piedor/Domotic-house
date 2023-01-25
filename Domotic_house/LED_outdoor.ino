@@ -10,7 +10,7 @@ if the light sensor is on it controls the illumination.
 
 bool valueLOutdoor = 0;
 String valueLOutdoorDB = "off"; 
-int light; //to clear the project 0=light off and 1=light on
+bool light=false; //to clear the project 0=light off and 1=light on
 float lightLevel; // lux from light sensor
 
 void IRAM_ATTR changeValueLOutdoor(){
@@ -64,9 +64,6 @@ void setupLED_outdoor() {
   pinMode(LED_OUTDOOR, OUTPUT);     
   pinMode(BUT_OUTDOOR, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUT_OUTDOOR), changeValueLOutdoor, FALLING);
-  light=0;
-  valueLOutdoorDB = "sens_on";
-  
 }
 //the loop controll if the outdoor light sensor is active or not then it change the value to light_on (or light_off) 
 void loopLED_outdoor() {
@@ -74,31 +71,31 @@ void loopLED_outdoor() {
   lightLevel = getLuxSensor();  
   
   if((!valueLOutdoor && valueLOutdoorDB == "sens_on") || (!valueLOutdoor && valueLOutdoorDB == "on")){
-    digitalWrite(LED_OUTDOOR, LOW);
+    light=false;
     valueLOutdoor = 0;
     setLedOutdoor("off");
     //delay(500);
   }
   
   if((valueLOutdoor && valueLOutdoorDB == "sens_off") || (valueLOutdoor && valueLOutdoorDB == "off")){
-    digitalWrite(LED_OUTDOOR, HIGH);
+    light=true;
     valueLOutdoor = 1;
     setLedOutdoor("on");
     //delay(500);
   }
   
-    
   if (valueLOutdoorDB == "sens_on")
   { 
     if(lightLevel<=200)
     { 
-      digitalWrite(LED_OUTDOOR, HIGH);
+      light=true;
+     }
+  }else if(valueLOutdoorDB=="on") {
+      light=true;
+    }else {
+      light=false;
     }
-    else
-    {
-      digitalWrite(LED_OUTDOOR, LOW);
-    }
-  }
+  
   /*
   matching reset, when the sens output matchs the leds it reset 
   example: if its dark but I decided to close the leds manually from the button
@@ -106,6 +103,8 @@ void loopLED_outdoor() {
       from off to sens_off; the same if I turned up the leds when there was light,
       when the sensor output should turn up the leds it reset to sens_on
   */
+  if(light) digitalWrite(LED_OUTDOOR, HIGH);
+  else digitalWrite(LED_OUTDOOR, LOW);
   if(valueLOutdoorDB == "on" && lightLevel <= 200) setLedOutdoor("sens_on");
   if(valueLOutdoorDB == "off" && lightLevel > 200) setLedOutdoor("sens_off");
   //delay(1000);  

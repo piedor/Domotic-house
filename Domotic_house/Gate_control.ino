@@ -13,6 +13,8 @@
 Servo gate;
 bool valueGate = 0;
 String valueGateDB = "close";    
+long t0=0; //used as a timer to stop the servo
+bool run_gate;
 
 void IRAM_ATTR changeValueGate(){
   static unsigned long last_interrupt_time = 0;
@@ -21,24 +23,24 @@ void IRAM_ATTR changeValueGate(){
   if (interrupt_time - last_interrupt_time > 300) 
   {
     valueGate = !valueGate;
+    t0=millis();
   }
   last_interrupt_time = interrupt_time;
 }
 
 void stopGate(){
   gate.write(STOP);
+  run_gate=false;
 }
 
 void openGate(){
   gate.write(FORWARD);
-  delay(2000);
-  stopGate();
+  run_gate=true;
 }
 
 void closeGate(){
   gate.write(BACKWARDS);
-  delay(2000);
-  stopGate();
+  run_gate=true;
 }
 
 void setupGate_control() {
@@ -52,7 +54,6 @@ void loopGate_control() {
   {
     openGate();
     valueGate = 1;
-    setGate("open");
     // delay(300);
   }
   
@@ -60,7 +61,16 @@ void loopGate_control() {
   {
     closeGate();
     valueGate = 0;
-    setGate("close");
     // delay(300);
   }
+  if(run_gate /* &&  /*quando viene premuto il pulsante*/)  //quando premo se si sta muovendo devo fermare il cancello 
+    stopGate();
+  
+  if (run_gate && (millis()-t0)>2000){
+    stopGate();
+    if(valueGateDB== "opening")
+      setGate("open");
+    if(valueGateDB == "closing") 
+      setGate("close");
+ }
 }
