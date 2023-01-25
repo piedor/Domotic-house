@@ -2,10 +2,10 @@
 
 #define PIN_ESP_RX 23
 #define PIN_ESP_TX 17
-#define SSID "ssid"
+#define SSID "prova"
 #define PASSWORD "password"
 // ID of google script 
-#define SCRIPT_ID "AKfycbwFisqe8wPxmIKcaQnJlYU3n6ZATmZzWe7gw1YhA7TUQVhRspb5yicT2KtGj6UhhqNb"
+#define SCRIPT_ID "AKfycbxW962zPA_5ntjSIcXIcOj25JmkgCzZxzMsfR6GbGyTtFA17eCmjz1UV6AzSmgZviN8lg"
 // Google script send 11 values separated by ';' and receive 10 values because date is automatically generated
 #define N_COMMANDS 11
 // Indexes for commands array
@@ -49,9 +49,8 @@ void getCommandsSpreadsheet(){
   else{
     clearArrayCommands();
     // Get substring from 'userHtml' to end of response. Example of msg after: userHtml:\x22off;on;off;off;sens_on;on;cool;12.5;22.6;close;20/01/2023 13:50:08\x22,attributes:...</body></html>\r\n\r\n\r\n
-    String msg = response.substring(response.indexOf("userHtml"), response.length());
+    String msg = response.substring(response.indexOf("$$") + 2, response.indexOf("%%"));
     // Get values separated by ';'. Example of msg after: off;on;off;off;sens_on;on;cool;12.5;22.6;close;20/01/2023 13:50:08
-    msg = msg.substring(msg.indexOf(":") + 5, msg.indexOf(",") - 4);
     // Split the values in commands array
     int StringCount = 0;
     while(msg.length() > 0){

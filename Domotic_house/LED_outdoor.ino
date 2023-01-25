@@ -7,7 +7,6 @@ if the light sensor is on it controls the illumination.
 
 #define BUT_OUTDOOR 35
 #define LED_OUTDOOR 27
-opt3001 opt3001;
 
 bool valueLOutdoor = 0;
 String valueLOutdoorDB = "off"; 
@@ -41,9 +40,16 @@ float getLuxSensor(){
     Wire.readBytes(iBuff, 2);
     iData = (iBuff[0] << 8) | iBuff[1];
     fLux = SensorOpt3001_convert(iData);   // Calculate LUX from sensor data
-    Serial.println(fLux);                        // Print it on serial terminal
   }
   return(fLux);
+}
+
+float SensorOpt3001_convert(uint16_t iRawData)
+{
+  uint16_t iExponent, iMantissa;
+  iMantissa = iRawData & 0x0FFF;                 // Extract Mantissa
+  iExponent = (iRawData & 0xF000) >> 12;         // Extract Exponent 
+  return iMantissa * (0.01 * pow(2, iExponent)); // Calculate final LUX
 }
 
 void setupLED_outdoor() {
@@ -59,7 +65,7 @@ void setupLED_outdoor() {
   pinMode(BUT_OUTDOOR, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUT_OUTDOOR), changeValueLOutdoor, FALLING);
   light=0;
-  value_LO="sens_on";
+  valueLOutdoorDB = "sens_on";
   
 }
 //the loop controll if the outdoor light sensor is active or not then it change the value to light_on (or light_off) 
@@ -67,14 +73,14 @@ void loopLED_outdoor() {
   valueLOutdoorDB = getLedOutdoor(); //acquire the data from the database 
   lightLevel = getLuxSensor();  
   
-  if((!valueLStudio && valueLStudioDB == "sens_on") || (!valueLStudio && valueLStudioDB == "on")){
+  if((!valueLOutdoor && valueLOutdoorDB == "sens_on") || (!valueLOutdoor && valueLOutdoorDB == "on")){
     digitalWrite(LED_OUTDOOR, LOW);
     valueLOutdoor = 0;
     setLedOutdoor("off");
     //delay(500);
   }
   
-  if((valueLStudio && valueLStudioDB == "sens_off") || (valueLStudio && valueLStudioDB == "off")){
+  if((valueLOutdoor && valueLOutdoorDB == "sens_off") || (valueLOutdoor && valueLOutdoorDB == "off")){
     digitalWrite(LED_OUTDOOR, HIGH);
     valueLOutdoor = 1;
     setLedOutdoor("on");
@@ -82,7 +88,7 @@ void loopLED_outdoor() {
   }
   
     
-  if (valueLStudioDB == "sens_on")
+  if (valueLOutdoorDB == "sens_on")
   { 
     if(lightLevel<=200)
     { 
@@ -100,7 +106,7 @@ void loopLED_outdoor() {
       from off to sens_off; the same if I turned up the leds when there was light,
       when the sensor output should turn up the leds it reset to sens_on
   */
-  if(valueLStudioDB == "on" && lightLevel <= 200) setLedOutdoor("sens_on");
-  if(value_LO == "off" && lightLevel > 200) setLedOutdoor("sens_off");
+  if(valueLOutdoorDB == "on" && lightLevel <= 200) setLedOutdoor("sens_on");
+  if(valueLOutdoorDB == "off" && lightLevel > 200) setLedOutdoor("sens_off");
   //delay(1000);  
 }
