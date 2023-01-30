@@ -75,6 +75,7 @@ bool ESP8266_01::checkAck(String ack, int timeout){
 		while(serial->available()){
 			_message += (char)serial->read();
 		}
+
 		if(findSubstring(_message, ack) || findSubstring(_message, NACK_OUT)){
 			break;
 		}

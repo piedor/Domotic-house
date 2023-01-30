@@ -2,10 +2,10 @@
 
 #define PIN_ESP_RX 23
 #define PIN_ESP_TX 17
-#define SSID "prova"
-#define PASSWORD "password"
+#define SSID "retenik"
+#define PASSWORD "passwordxxx"
 // ID of google script 
-#define SCRIPT_ID "AKfycbxW962zPA_5ntjSIcXIcOj25JmkgCzZxzMsfR6GbGyTtFA17eCmjz1UV6AzSmgZviN8lg"
+#define SCRIPT_ID "AKfycbyEn0mlY0pS9oK6ebzIZ-AeAz1RUhfqbrdEi-9vO-VtpKRNj7RWS-DZXp7vOY-rOmGAsQ"
 // Google script send 11 values separated by ';' and receive 10 values because date is automatically generated
 #define N_COMMANDS 11
 // Indexes for commands array
@@ -29,6 +29,7 @@ ESP8266_01 esp;
 // Update it with getCommandsSpreadsheet function
 // Send the values to spreadsheet with sendDataSpreadsheet function
 String commands[N_COMMANDS];
+String valuesToSend = "";
 
 void clearArrayCommands(){
   // Set commands array to NULL values
@@ -36,6 +37,7 @@ void clearArrayCommands(){
     commands[i] = "NULL";
   }
 }
+
 
 void getCommandsSpreadsheet(){
   // Put spreadsheet values into commands array
@@ -126,55 +128,90 @@ void sendDataSpreadsheet(){
     Serial.println("Error sending data to spreadsheet");
   }
 }
+void sendDataSpreadsheet2(String valueToSend){
+  // Send commands array values to spreadsheet
+  // esp.getSecureConnection(host, request, port, want response, want keep connection alive)
+  // Example of request when sending data to spreadsheet: script.google.com/macros/s/*SCRIPT_ID*/exec?*VARIABLE1*=*VALUE1*&*VARIABLE2*=*VALUE2*
+  String ack = esp.getSecureConnection("script.google.com", "/macros/s/" + String(SCRIPT_ID) + "/exec?"+ valueToSend, 443, false, true);
+  if(ack.equals("OK")){
+    if(valuesToSend.equals(valueToSend)){
+      valuesToSend = "";
+    }
+    Serial.println("Data sent to spreadsheet");
+  }
+  else{
+    Serial.println("Error sending data to spreadsheet");
+  }
+}
 
 void setLedKitchen(String value){
+  String temp = "LedKitchen=" + commands[I_LED_KITCHEN] + "&";
+  valuesToSend.replace(temp, "");
   commands[I_LED_KITCHEN] = value;
-  sendDataSpreadsheet();
+  valuesToSend += "LedKitchen=" + value + "&";
 }
 
 void setLedBathroom(String value){
+  String temp = "LedBathroom=" + commands[I_LED_BATHROOM] + "&";
+  valuesToSend.replace(temp, "");
   commands[I_LED_BATHROOM] = value;
-  sendDataSpreadsheet();
+  valuesToSend += "LedBathroom=" + value + "&";
 }
 
 void setLedBedroom(String value){
+  String temp = "LedBedroom=" + commands[I_LED_BEDROOM] + "&";
+  valuesToSend.replace(temp, "");
   commands[I_LED_BEDROOM] = value;
-  sendDataSpreadsheet();
+  valuesToSend += "LedBedroom=" + value + "&";
 }
 
 void setLedStudio(String value){
+  String temp = "LedStudio=" + commands[I_LED_STUDIO] + "&";
+  valuesToSend.replace(temp, "");
   commands[I_LED_STUDIO] = value;
-  sendDataSpreadsheet();
+  valuesToSend += "LedStudio=" + value + "&";
 }
 
 void setLedOutdoor(String value){
+  String temp = "LedOutdoor=" + commands[I_LED_OUTDOOR] + "&";
+  valuesToSend.replace(temp, "");
   commands[I_LED_OUTDOOR] = value;
-  sendDataSpreadsheet();
+  valuesToSend += "LedOutdoor=" + value + "&";
 }
 
 void setThermSwitch(String value){
+  String temp = "TSwitch=" + commands[I_T_SWITCH] + "&";
+  valuesToSend.replace(temp, "");
   commands[I_T_SWITCH] = value;
-  sendDataSpreadsheet();
+  valuesToSend += "TSwitch=" + value + "&";
 }
 
 void setThermMode(String value){
+  String temp = "TMode=" + commands[I_T_MODE] + "&";
+  valuesToSend.replace(temp, "");
   commands[I_T_MODE] = value;
-  sendDataSpreadsheet();
+  valuesToSend += "TMode=" + value + "&";
 }
 
-void setThermSet(float temp){
-  commands[I_T_SET] = temp;
-  sendDataSpreadsheet();
+void setThermSet(float value){
+  String temp = "TSet=" + commands[I_T_SET] + "&";
+  valuesToSend.replace(temp, "");
+  commands[I_T_SET] = String(value);
+  valuesToSend +="TSet=" + String(value) + "&";
 }
 
-void setTempIndoor(float temp){
-  commands[I_TEMP_INDOOR] = temp;
-  sendDataSpreadsheet();
+void setTempIndoor(float value){
+  String temp = "TempIndoor=" + commands[I_TEMP_INDOOR] + "&";
+  valuesToSend.replace(temp, "");
+  commands[I_TEMP_INDOOR] = String(value);
+  valuesToSend += "TempIndoor=" + String(value) + "&";
 }
 
 void setGate(String value){
+  String temp = "Gate=" + commands[I_GATE] + "&";
+  valuesToSend.replace(temp, "");
   commands[I_GATE] = value;
-  sendDataSpreadsheet();
+  valuesToSend += "Gate=" + value + "&";
 }
 
 void initSpreadsheet(){
@@ -185,9 +222,9 @@ void initSpreadsheet(){
   commands[I_LED_STUDIO] = "off";
   commands[I_LED_OUTDOOR] = "off";
   commands[I_T_SWITCH] = "off";
-  commands[I_T_SET] = 0.0;
+  commands[I_T_SET] = "18.0";
   commands[I_T_MODE] = "warm";
-  commands[I_TEMP_INDOOR] = getTempIndoor();
+  commands[I_TEMP_INDOOR] = String(getTempIndoor());
   commands[I_GATE] = "close";
   sendDataSpreadsheet();
 }
@@ -214,15 +251,19 @@ void setup() {
   esp.setAsStation();
   // The ESP tries to reconnect to AP at the interval of 10 seconds for 100 times when disconnected
   esp.setAutoReconnectWifi(10, 100);
-  // Connect WI-FI
-  while(esp.isConnected().equals("")){
+  // Connect WI-FI (attempt 2 times)
+  int i=0;
+  while(esp.isConnected().equals("") && i < 2){
     esp.connectWifi(SSID, PASSWORD);
     delay(500);
+    i++;
   }
   // As ESP8266 will only connect to one server (script.google.com) is not needed the multi connection support 
   esp.setSingleConnection();
   // Set all commands in spreadsheet to default
   initSpreadsheet();
+
+  delay(2000);
 
   lastMillis = millis();
 }
@@ -239,8 +280,11 @@ void loop() {
 
   // Check for commands remote timer
   currentMillis = millis();
-  if(currentMillis - lastMillis > 1000){
+  if((currentMillis - lastMillis > 1000) && valuesToSend.equals("")){
     getCommandsSpreadsheet();
     lastMillis = millis();
+  }
+  if(!valuesToSend.equals("")){
+    sendDataSpreadsheet2(valuesToSend);
   }
 }
