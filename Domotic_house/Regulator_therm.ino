@@ -17,7 +17,7 @@ and turn on or off the thermostat from button On/Off*/
 LiquidCrystal_I2C lcd(0x3F,16,2);  //Set dell'indirizzo dell'LCD con 16 caratteri e 2 righe
 Adafruit_TMP006 tmp006;
 
-/*SCHEMINO DELL'LCD PER BESTEMMIARE MENO :))
+/*  Lcd scheme sample
       0 1 2 3 4 5 6 7 8 9 A B C D E F
     0 T E M P : - - . - - X P O W E R
     1 S E T   : - - . - - X X - - - X
@@ -206,7 +206,9 @@ void loopRegulator_therm() {          // read the value of of the therm status
     tSetChange = false;
   }
   else if(!tSetChange){
-    valueTSetDB = getThermSet();      //acquire the data from the database   
+    if(getThermSet()!= 0.0){
+    valueTSetDB = getThermSet();    //acquire the data from the database     
+    }
   }
   valueTSwitchDB = getThermSwitch();
   if(valueTSwitchDB.equals("go_on") || valueTSwitchDB.equals("go_off")){

@@ -17,11 +17,11 @@
 #define UPDATE_DISTANCE_INTERVAL 100000 
 
 Servo gate;
-String valueGate = "close";
-String valueGateDB = "close";     
-unsigned long startMicrosGateMoving = 0;
-unsigned long microsElapsedGateMoving = 0;
-bool gateRunning = false;
+String valueGate = "close";                   //define the status of the gate
+String valueGateDB = "close";                 //define the action of the gate from the DB
+unsigned long startMicrosGateMoving = 0;      //define how much time 
+unsigned long microsElapsedGateMoving = 0;    //define how much time 
+bool gateRunning = false;                     //define if the gate is running
 
 hw_timer_t * timerGate = NULL;
 hw_timer_t * timerSensor = NULL;
@@ -56,8 +56,6 @@ void IRAM_ATTR ultrasonicEcho(){
       // Stop timers
       timerStop(timerGate);
       timerStop(timerSensor);
-      // We know how many micros moved motor
-      microsElapsedGateMoving = micros() - startMicrosGateMoving; 
       if(valueGate.equals("opening")){
         setGate("open"); 
         valueGate = "open";
@@ -144,6 +142,7 @@ void IRAM_ATTR changeValueGate(){
 }
 
 void stopGate(){
+  microsElapsedGateMoving = micros() - startMicrosGateMoving; // the new moving time will be how much time did the gate moved
   gateRunning = false;
   gate.write(STOP);
 }

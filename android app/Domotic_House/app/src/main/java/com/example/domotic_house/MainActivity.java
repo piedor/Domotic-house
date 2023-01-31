@@ -11,11 +11,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-public Button lightPage;
-public Button gatePage;
-public Button thermostatPage;
-public Switch language_btn;
+Button lightPage;
+Button gatePage;
+Button thermostatPage;
+Switch language_btn;
 TextView title;
+
 void languageReset(){
     title=findViewById(R.id.title_home);
     if(Communication.language=="ita") {
@@ -33,7 +34,6 @@ void languageReset(){
         if(!language_btn.isChecked()) language_btn.toggle();
     }
 }
-    int i=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -44,7 +44,6 @@ void languageReset(){
         gatePage = findViewById(R.id.gate_page);
         thermostatPage = findViewById(R.id.thermostat_page);
 
-        Communication.dataExample();
         lightPage.setOnClickListener(new View.OnClickListener() {
         @Override
             public void onClick(View view) {

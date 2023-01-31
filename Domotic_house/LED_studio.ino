@@ -36,7 +36,13 @@ void setupLED_studio() {
 }
 //the loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_studio() {
-  valueLStudioDB = getLedStudio();
+  if(valueLStudioDB.equals("on") && getLedStudio().equals("off")){
+    setLedStudio("on");
+  }else if(valueLStudioDB.equals("off") && getLedStudio().equals("on")){
+    setLedStudio("off");
+  }else{
+    valueLStudioDB = getLedStudio();  
+  }
   if(valueLStudioDB.equals("go_on") || valueLStudioDB.equals("go_off")){
     changeValueLStudio();
   }

@@ -35,7 +35,13 @@ void setupLED_kitchen(){
 
 //the loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_kitchen(){
-  valueLKitchenDB = getLedKitchen();
+  if(valueLKitchenDB.equals("on") && getLedKitchen().equals("off")){
+    setLedKitchen("on");
+  }else if(valueLKitchenDB.equals("off") && getLedKitchen().equals("on")){
+    setLedKitchen("off");
+  }else{
+    valueLKitchenDB = getLedKitchen();
+  }
   if(valueLKitchenDB.equals("go_on") || valueLKitchenDB.equals("go_off")){
     changeValueLKitchen();
   }

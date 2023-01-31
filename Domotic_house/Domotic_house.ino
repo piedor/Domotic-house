@@ -30,14 +30,41 @@ ESP8266_01 esp;
 // Send the values to spreadsheet with sendDataSpreadsheet function
 String commands[N_COMMANDS];
 String valuesToSend = "";
+// Prevent concurrent access to commands[] variable
+portMUX_TYPE commandsMux = portMUX_INITIALIZER_UNLOCKED;
+// Prevent concurrent access to valuesToSend variable
+portMUX_TYPE valuesToSendMux = portMUX_INITIALIZER_UNLOCKED;
+
+void setCommands(String value, int index){
+  // Insert value into commands[index]
+  portENTER_CRITICAL(&commandsMux);
+  commands[index] = value;
+  portEXIT_CRITICAL(&commandsMux);
+}
+
+String getCommands(int index){
+  // Get commands[index]
+  String temp;
+  portENTER_CRITICAL(&commandsMux);
+  temp = commands[index];
+  portEXIT_CRITICAL(&commandsMux);
+  return(temp);
+}
+
+String getValuesToSend(){
+  String temp;
+  portENTER_CRITICAL(&valuesToSendMux);
+  temp = valuesToSend;
+  portEXIT_CRITICAL(&valuesToSendMux);
+  return(temp);
+}
 
 void clearArrayCommands(){
   // Set commands array to NULL values
   for(int i=0;i<N_COMMANDS;i++){
-    commands[i] = "NULL";
+    setCommands("NULL", i);
   }
 }
-
 
 void getCommandsSpreadsheet(){
   // Put spreadsheet values into commands array
@@ -62,11 +89,11 @@ void getCommandsSpreadsheet(){
         int index = msg.indexOf(';');
         if (index == -1) // No ; found
         {
-          commands[StringCount++] = msg;
+          setCommands(msg, StringCount++);
           break;
         }
         else{
-          commands[StringCount++] = msg.substring(0, index);
+          setCommands(msg.substring(0, index), StringCount++);
           msg = msg.substring(index+1);
         }
       }
@@ -75,43 +102,43 @@ void getCommandsSpreadsheet(){
 }
 
 String getLedKitchen(){
-  return(commands[I_LED_KITCHEN]);
+  return(getCommands(I_LED_KITCHEN));
 }
 
 String getLedBathroom(){
-  return(commands[I_LED_BATHROOM]);
+  return(getCommands(I_LED_BATHROOM));
 }
 
 String getLedBedroom(){
-  return(commands[I_LED_BEDROOM]);
+  return(getCommands(I_LED_BEDROOM));
 }
 
 String getLedStudio(){
-  return(commands[I_LED_STUDIO]);
+  return(getCommands(I_LED_STUDIO));
 }
 
 String getLedOutdoor(){
-  return(commands[I_LED_OUTDOOR]);
+  return(getCommands(I_LED_OUTDOOR));
 }
 
 String getThermSwitch(){
-  return(commands[I_T_SWITCH]);
+  return(getCommands(I_T_SWITCH));
 }
 
 String getThermMode(){
-  return(commands[I_T_MODE]);
+  return(getCommands(I_T_MODE));
 }
 
 float getThermSet(){
-  return(commands[I_T_SET].toFloat());
+  return(getCommands(I_T_SET).toFloat());
 }
 
 String getGate(){
-  return(commands[I_GATE]);
+  return(getCommands(I_GATE));
 }
 
 String getDate(){
-  return(commands[I_DATE]);
+  return(getCommands(I_DATE));
 }
 
 void sendDataSpreadsheet(){
@@ -134,8 +161,10 @@ void sendDataSpreadsheet2(String valueToSend){
   // Example of request when sending data to spreadsheet: script.google.com/macros/s/*SCRIPT_ID*/exec?*VARIABLE1*=*VALUE1*&*VARIABLE2*=*VALUE2*
   String ack = esp.getSecureConnection("script.google.com", "/macros/s/" + String(SCRIPT_ID) + "/exec?"+ valueToSend, 443, false, true);
   if(ack.equals("OK")){
-    if(valuesToSend.equals(valueToSend)){
+    if(getValuesToSend().equals(valueToSend)){
+      portENTER_CRITICAL(&valuesToSendMux);
       valuesToSend = "";
+      portEXIT_CRITICAL(&valuesToSendMux);
     }
     Serial.println("Data sent to spreadsheet");
   }
@@ -145,87 +174,107 @@ void sendDataSpreadsheet2(String valueToSend){
 }
 
 void setLedKitchen(String value){
-  String temp = "LedKitchen=" + commands[I_LED_KITCHEN] + "&";
+  String temp = "LedKitchen=" + getCommands(I_LED_KITCHEN) + "&";
+  portENTER_CRITICAL(&valuesToSendMux);
   valuesToSend.replace(temp, "");
-  commands[I_LED_KITCHEN] = value;
   valuesToSend += "LedKitchen=" + value + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(value, I_LED_KITCHEN);
 }
 
 void setLedBathroom(String value){
-  String temp = "LedBathroom=" + commands[I_LED_BATHROOM] + "&";
+  String temp = "LedBathroom=" + getCommands(I_LED_BATHROOM) + "&";
+  portENTER_CRITICAL(&valuesToSendMux);  
   valuesToSend.replace(temp, "");
-  commands[I_LED_BATHROOM] = value;
   valuesToSend += "LedBathroom=" + value + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(value, I_LED_BATHROOM);
 }
 
 void setLedBedroom(String value){
-  String temp = "LedBedroom=" + commands[I_LED_BEDROOM] + "&";
+  String temp = "LedBedroom=" + getCommands(I_LED_BEDROOM) + "&";
+  portENTER_CRITICAL(&valuesToSendMux); 
   valuesToSend.replace(temp, "");
-  commands[I_LED_BEDROOM] = value;
   valuesToSend += "LedBedroom=" + value + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(value, I_LED_BEDROOM);
 }
 
 void setLedStudio(String value){
-  String temp = "LedStudio=" + commands[I_LED_STUDIO] + "&";
+  String temp = "LedStudio=" + getCommands(I_LED_STUDIO) + "&";
+  portENTER_CRITICAL(&valuesToSendMux); 
   valuesToSend.replace(temp, "");
-  commands[I_LED_STUDIO] = value;
   valuesToSend += "LedStudio=" + value + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(value, I_LED_STUDIO);
 }
 
 void setLedOutdoor(String value){
-  String temp = "LedOutdoor=" + commands[I_LED_OUTDOOR] + "&";
+  String temp = "LedOutdoor=" + getCommands(I_LED_OUTDOOR) + "&";
+  portENTER_CRITICAL(&valuesToSendMux); 
   valuesToSend.replace(temp, "");
-  commands[I_LED_OUTDOOR] = value;
   valuesToSend += "LedOutdoor=" + value + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(value, I_LED_OUTDOOR);
 }
 
 void setThermSwitch(String value){
-  String temp = "TSwitch=" + commands[I_T_SWITCH] + "&";
+  String temp = "TSwitch=" + getCommands(I_T_SWITCH) + "&";
+  portENTER_CRITICAL(&valuesToSendMux);
   valuesToSend.replace(temp, "");
-  commands[I_T_SWITCH] = value;
   valuesToSend += "TSwitch=" + value + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(value, I_T_SWITCH);
 }
 
 void setThermMode(String value){
-  String temp = "TMode=" + commands[I_T_MODE] + "&";
+  String temp = "TMode=" + getCommands(I_T_MODE) + "&";
+  portENTER_CRITICAL(&valuesToSendMux);
   valuesToSend.replace(temp, "");
-  commands[I_T_MODE] = value;
   valuesToSend += "TMode=" + value + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(value, I_T_MODE);
 }
 
 void setThermSet(float value){
-  String temp = "TSet=" + commands[I_T_SET] + "&";
+  String temp = "TSet=" + getCommands(I_T_SET) + "&";
+  portENTER_CRITICAL(&valuesToSendMux);
   valuesToSend.replace(temp, "");
-  commands[I_T_SET] = String(value);
   valuesToSend +="TSet=" + String(value) + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(String(value), I_T_SET);
 }
 
 void setTempIndoor(float value){
-  String temp = "TempIndoor=" + commands[I_TEMP_INDOOR] + "&";
+  String temp = "TempIndoor=" + getCommands(I_TEMP_INDOOR) + "&";
+  portENTER_CRITICAL(&valuesToSendMux);
   valuesToSend.replace(temp, "");
-  commands[I_TEMP_INDOOR] = String(value);
   valuesToSend += "TempIndoor=" + String(value) + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(String(value), I_TEMP_INDOOR);
 }
 
 void setGate(String value){
-  String temp = "Gate=" + commands[I_GATE] + "&";
+  String temp = "Gate=" + getCommands(I_GATE) + "&";
+  portENTER_CRITICAL(&valuesToSendMux);
   valuesToSend.replace(temp, "");
-  commands[I_GATE] = value;
   valuesToSend += "Gate=" + value + "&";
+  portEXIT_CRITICAL(&valuesToSendMux);
+  setCommands(value, I_GATE);
 }
 
 void initSpreadsheet(){
   // Set default commands to spreadsheet
-  commands[I_LED_KITCHEN] = "off";
-  commands[I_LED_BATHROOM] = "off";
-  commands[I_LED_BEDROOM] = "off";
-  commands[I_LED_STUDIO] = "off";
-  commands[I_LED_OUTDOOR] = "off";
-  commands[I_T_SWITCH] = "off";
-  commands[I_T_SET] = "18.0";
-  commands[I_T_MODE] = "warm";
-  commands[I_TEMP_INDOOR] = String(getTempIndoor());
-  commands[I_GATE] = "close";
+  setCommands("off", I_LED_KITCHEN);
+  setCommands("off", I_LED_BATHROOM);
+  setCommands("off", I_LED_BEDROOM);
+  setCommands("off", I_LED_STUDIO);
+  setCommands("off", I_LED_OUTDOOR);
+  setCommands("off", I_T_SWITCH);
+  setCommands("18.0", I_T_SET);
+  setCommands("warm", I_T_MODE);
+  setCommands(String(getTempIndoor()), I_TEMP_INDOOR);
+  setCommands("close", I_GATE);
   sendDataSpreadsheet();
 }
 
@@ -263,8 +312,6 @@ void setup() {
   // Set all commands in spreadsheet to default
   initSpreadsheet();
 
-  delay(2000);
-
   lastMillis = millis();
 }
 
@@ -280,11 +327,11 @@ void loop() {
 
   // Check for commands remote timer
   currentMillis = millis();
-  if((currentMillis - lastMillis > 1000) && valuesToSend.equals("")){
+  if((currentMillis - lastMillis > 1000) && getValuesToSend().equals("")){
     getCommandsSpreadsheet();
     lastMillis = millis();
   }
-  if(!valuesToSend.equals("")){
-    sendDataSpreadsheet2(valuesToSend);
+  if(!getValuesToSend().equals("")){
+    sendDataSpreadsheet2(getValuesToSend());
   }
 }

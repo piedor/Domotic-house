@@ -37,7 +37,13 @@ void setupLED_bathroom() {
 
 // The loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_bathroom() {
-  valueLBathDB = getLedBathroom();
+  if(valueLBathDB.equals("on") && getLedBathroom().equals("off")){
+    setLedBathroom("on");
+  }else if(valueLBathDB.equals("off") && getLedBathroom().equals("on")){
+    setLedBathroom("off");
+  }else{
+    valueLBathDB = getLedBathroom();
+  }
   if(valueLBathDB.equals("go_on") || valueLBathDB.equals("go_off")){
     changeValueLBath();
   }

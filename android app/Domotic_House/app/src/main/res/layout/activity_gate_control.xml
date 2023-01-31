@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GateControl">
 
+
+  <ImageButton
+      android:id="@+id/pause_gate"
+      android:layout_width="170dp"
+      android:layout_height="170dp"
+      android:layout_marginTop="92dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:srcCompat="@drawable/pause_button" />
+
+  <ImageButton
+      android:id="@+id/play_gate"
+      android:layout_width="170dp"
+      android:layout_height="170dp"
+      android:layout_marginTop="92dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.5"
+      app:layout_constraintStart_toEndOf="@+id/pause_gate"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:srcCompat="@drawable/play_button" />
 
   <Button
       android:id="@+id/home_gate"
@@ -18,14 +39,15 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
-  <ImageButton
-      android:id="@+id/imageButton"
-      android:layout_width="239dp"
-      android:layout_height="198dp"
-
-      app:srcCompat="@android:drawable/ic_media_pause"
-      tools:layout_editor_absoluteX="83dp"
-      tools:layout_editor_absoluteY="76dp" />
-
+  <TextView
+      android:id="@+id/title_gate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="29dp"
+      android:text="GATE CONTROL PANNEL"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.5"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

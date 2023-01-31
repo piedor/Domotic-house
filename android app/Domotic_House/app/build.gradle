@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.example.domotic_house'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.domotic_house"
@@ -36,6 +36,18 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
-
     implementation 'com.android.volley:volley:1.2.1'
+/*
+    // https://developers.google.com/gsuite/guides/android
+    // https://mvnrepository.com/artifact/com.google.api-client/google-api-client-android
+    implementation('com.google.api-client:google-api-client-android:1.28.0') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude module: 'guava-jdk5'
+    }
+    // https://mvnrepository.com/artifact/com.google.apis/google-api-services-sheets
+    implementation('com.google.apis:google-api-services-sheets:v4-rev571-1.25.0') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude module: 'guava-jdk5'
+    }*/
+    //
 }

@@ -1,29 +1,55 @@
 package com.example.domotic_house;
 
 public class Thermostat {
-    public static Tmode modeTherm;
-    public static Ton_off onTherm;
-    public static float tempImp;
-    public static float tempSens;
+    private static Tmode modeTherm;
+    private static TSwitch onTherm;
+    private static double tempImp;
+    private static double tempSens;
     Thermostat() {
-        onTherm = Ton_off.off;
+        onTherm = TSwitch.off;
+        modeTherm=Tmode.warm;
+        tempSens=18;
+        tempImp=18;
     }
 
-    Thermostat(Ton_off a, Tmode b, float c, float d) {
+    Thermostat(TSwitch a, Tmode b, float c, float d) {
         onTherm = a;
         modeTherm = b;
         tempImp = c;
         tempSens = d;
     }
 
-    public void getThermostatValues(Ton_off a,Tmode b, float c, float d) {
+//methods to set and get the values of the object
+    public void setTempImp(float a){
+        tempImp=a;
+    }
+    public void setModeTherm(String a){
+        modeTherm=Tmode.valueOf(a);
+    }
+    public void setOnTherm(String a){
+        onTherm= TSwitch.valueOf(a);
+    }
+    public void setTempSens(float a){
+        tempSens=a;
+    }
+
+    public String getModeTherm(){
+        return String.valueOf(modeTherm);
+    }
+    public String getSwitchTherm(){
+        return String.valueOf(onTherm);
+    }
+    public double getTempImp(){
+        return tempImp;
+    }
+    public double getTempSens(){
+        return tempSens;
+    }
+
+    public void setThermostatValues(TSwitch a, Tmode b, float c, float d) {
         onTherm = a;
         modeTherm= b;
         tempImp = c;
         tempSens = d;
-    }
-
-    public String setThermostatValues() {
-        return onTherm + ";" + modeTherm + ";" + tempImp;
     }
 }

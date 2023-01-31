@@ -11,11 +11,11 @@ public class Gate {
         moveGate = a;
     }
 
-    public void getGateValue(Gmove a) {
+    //methods to set and get the value of the object
+    public void setMoveGate(Gmove a) {
         moveGate = a;
     }
-
-    public String setGateValue() {
+    public String getMoveGate() {
         return String.valueOf(moveGate);
     }
 }

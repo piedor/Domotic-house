@@ -37,7 +37,13 @@ void setupLED_bedroom() {
 
 //the loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_bedroom() {
-  valueLBedDB = getLedBedroom();
+  if(valueLBedDB.equals("on") && getLedBedroom().equals("off")){
+    setLedBedroom("on");
+  }else if(valueLBedDB.equals("off") && getLedBedroom().equals("on")){
+    setLedBedroom("off");
+  }else{
+    valueLBedDB = getLedBedroom();
+  }
   if (valueLBedDB.equals("go_off") || valueLBedDB.equals("go_on")){
     changeValueLBed();
   }
