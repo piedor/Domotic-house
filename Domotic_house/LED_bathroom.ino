@@ -18,11 +18,12 @@ void IRAM_ATTR changeValueLBath(){
   // If interrupts come faster than 300ms, assume it's a bounce and ignore
   if (interrupt_time - last_interrupt_time > 300){
     valueLBath = !valueLBath;
-    digitalWrite(LED_BATH, valueLBath);
-    if((valueLBathDB.equals("go_on")) || (valueLBathDB.equals("off") && valueLBath)){
+    if(valueLBath){
+      digitalWrite(LED_BATH, HIGH);
       setLedBathroom("on");
     }
-    if((valueLBathDB.equals("go_off")) || (valueLBathDB.equals("on") && !valueLBath)){
+    else{
+      digitalWrite(LED_BATH, LOW);
       setLedBathroom("off");
     }
   }
@@ -37,14 +38,15 @@ void setupLED_bathroom() {
 
 // The loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_bathroom() {
-  if(valueLBathDB.equals("on") && getLedBathroom().equals("off")){
+  valueLBathDB = getLedBathroom();
+  if(valueLBathDB.equals("go_on")){
+    valueLBath = 1;
     setLedBathroom("on");
-  }else if(valueLBathDB.equals("off") && getLedBathroom().equals("on")){
+  }
+  if(valueLBathDB.equals("go_off")){
+    valueLBath = 0;
     setLedBathroom("off");
-  }else{
-    valueLBathDB = getLedBathroom();
   }
-  if(valueLBathDB.equals("go_on") || valueLBathDB.equals("go_off")){
-    changeValueLBath();
-  }
+  if(valueLBath) digitalWrite(LED_BATH, HIGH);
+  else digitalWrite(LED_BATH, LOW);
 }

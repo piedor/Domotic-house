@@ -17,12 +17,12 @@ void IRAM_ATTR changeValueLStudio(){
   // If interrupts come faster than 300ms, assume it's a bounce and ignore
   if (interrupt_time - last_interrupt_time > 300){
     valueLStudio = !valueLStudio;
-    digitalWrite(LED_STUDIO, valueLStudio);
-    if((valueLStudioDB.equals("go_on")) || (valueLStudioDB.equals("off") && valueLStudio)){
+    if(valueLStudio){
+      digitalWrite(LED_STUDIO, HIGH);
       setLedStudio("on");
     }
-  
-    if((valueLStudioDB.equals("go_off")) || (valueLStudioDB.equals("on") && !valueLStudio)){
+    else{
+      digitalWrite(LED_STUDIO, LOW);
       setLedStudio("off");
     }
   }
@@ -36,14 +36,15 @@ void setupLED_studio() {
 }
 //the loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_studio() {
-  if(valueLStudioDB.equals("on") && getLedStudio().equals("off")){
+  valueLStudioDB = getLedStudio();  
+  if(valueLStudioDB.equals("go_on")){
+    valueLStudio = 1;
     setLedStudio("on");
-  }else if(valueLStudioDB.equals("off") && getLedStudio().equals("on")){
+  }
+  if(valueLStudioDB.equals("go_off")){
+    valueLStudio = 0;
     setLedStudio("off");
-  }else{
-    valueLStudioDB = getLedStudio();  
   }
-  if(valueLStudioDB.equals("go_on") || valueLStudioDB.equals("go_off")){
-    changeValueLStudio();
-  }
+  if(valueLStudio) digitalWrite(LED_STUDIO, HIGH);
+  else digitalWrite(LED_STUDIO, LOW);
 }

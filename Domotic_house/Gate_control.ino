@@ -14,7 +14,7 @@
 // Trig pin of HCSR04
 #define PIN_DISTANCE_SENSOR_OUTPUT 2
 // Update distance interval (working only when gate is moving) (microseconds)
-#define UPDATE_DISTANCE_INTERVAL 100000 
+#define UPDATE_DISTANCE_INTERVAL 25000 
 
 Servo gate;
 String valueGate = "close";                   //define the status of the gate
@@ -30,6 +30,9 @@ hw_timer_t * timerSensor = NULL;
 volatile long ultrasonic_echo_start = 0;
 // the distance once it's been measured
 volatile long ultrasonic_distance = 0;
+
+bool externalStopper = false;
+int countObstacle = 0;
 
 void IRAM_ATTR ultrasonicPulse(){
   // Sets the trigger on HIGH state for 10 micro seconds to send a series of pulses
@@ -52,26 +55,34 @@ void IRAM_ATTR ultrasonicEcho(){
     ultrasonic_distance = (micros() - ultrasonic_echo_start) / 58;
     // If obstacle releaved
     if(ultrasonic_distance < 26){
-      
-      // Stop timers
-      timerStop(timerGate);
-      timerStop(timerSensor);
-      if(valueGate.equals("opening")){
-        setGate("open"); 
-        valueGate = "open";
+      externalStopper = true;
+      countObstacle++;
+      if(countObstacle == 4){
+        // Stop timers
+        timerStop(timerGate);
+        timerStop(timerSensor);
+        if(valueGate.equals("opening")){
+          setGate("open"); 
+          valueGate = "open";
+        }
+        else{
+          setGate("close"); 
+          valueGate = "close";
+        }
+        // Stop gate
+        stopGate();
+        countObstacle = 0;
       }
-      else{
-        setGate("close"); 
-        valueGate = "close";
-      }
-      // Stop gate
-      stopGate();
+    }
+    else{
+      countObstacle = 0;
     }
     ultrasonic_echo_start = 0;
   }
 }
 
 void IRAM_ATTR endOfRunGate(){
+  externalStopper = false;
   stopGate();
   timerStop(timerSensor);
   timerAlarmDisable(timerSensor);
@@ -87,25 +98,30 @@ void IRAM_ATTR endOfRunGate(){
 }
 
 void IRAM_ATTR setTimersGateSensor(){
-  Serial.println(microsElapsedGateMoving);
   // Reset timer gate and sensor
-    timerRestart(timerGate);
-    timerWrite(timerGate, microsElapsedGateMoving);
-    timerWrite(timerSensor, 0);
-    timerRestart(timerSensor);
-    // Set alarm to call endOfRunGate function after  2 second (value in microseconds).
-    // Do not repeat the alarm (third parameter)
+  timerRestart(timerGate);
+  timerWrite(timerGate, 0);
+  timerWrite(timerSensor, 0);
+  timerRestart(timerSensor);
+  // Set alarm to call endOfRunGate function after  2 second (value in microseconds).
+  // Do not repeat the alarm (third parameter)
+  if(externalStopper){
+    timerAlarmWrite(timerGate, microsElapsedGateMoving, false);
+    externalStopper = false;
+  }
+  else{
     timerAlarmWrite(timerGate, 2000000, false);
-    // Start an alarm
-    timerAlarmEnable(timerGate);
-  
-    // Link the echo function to the echo pin and start timer for exec ultrasonicPulse
-    attachInterrupt(digitalPinToInterrupt(PIN_DISTANCE_SENSOR_INPUT), ultrasonicEcho, FALLING);
-    timerAlarmEnable(timerSensor);
+  }
+  // Start an alarm
+  timerAlarmEnable(timerGate);
 
-    // Track how many micros gate move
-    startMicrosGateMoving = micros();
-    microsElapsedGateMoving = 0;
+  // Link the echo function to the echo pin and start timer for exec ultrasonicPulse
+  attachInterrupt(digitalPinToInterrupt(PIN_DISTANCE_SENSOR_INPUT), ultrasonicEcho, FALLING);
+  timerAlarmEnable(timerSensor);
+
+  // Track how many micros gate move
+  startMicrosGateMoving = micros();
+  microsElapsedGateMoving = 0;
 }
 
 void IRAM_ATTR changeValueGate(){
@@ -114,35 +130,43 @@ void IRAM_ATTR changeValueGate(){
   // If interrupts come faster than 300ms, assume it's a bounce and ignore
   if (interrupt_time - last_interrupt_time > 300) 
   {
-    Serial.println("db:"+valueGateDB);
-    Serial.println(valueGate);
-    setTimersGateSensor();
     if(valueGateDB.equals("opening") || valueGate.equals("close")){
       openGate();
       setGate("opening"); 
       valueGate = "opening";
+      setTimersGateSensor();
     }
     else if(valueGateDB.equals("closing") || valueGate.equals("open")){
       closeGate();
       setGate("closing"); 
       valueGate = "closing";
+      setTimersGateSensor();
     }
     else if(valueGate.equals("opening")){
+      externalStopper = true;
+      // Stop timers
+      timerStop(timerGate);
+      timerStop(timerSensor);
       stopGate();
       setGate("open");
       valueGate = "open"; 
     }
     else{
+      externalStopper = true;
+      // Stop timers
+      timerStop(timerGate);
+      timerStop(timerSensor);
       stopGate();
       setGate("close");
-      valueGate = "close";
+      valueGate = "close"; 
     }
   }
   last_interrupt_time = interrupt_time;
 }
 
 void stopGate(){
-  microsElapsedGateMoving = micros() - startMicrosGateMoving; // the new moving time will be how much time did the gate moved
+  // the new moving time will be how much time did the gate moved
+  microsElapsedGateMoving = micros() - startMicrosGateMoving; 
   gateRunning = false;
   gate.write(STOP);
 }

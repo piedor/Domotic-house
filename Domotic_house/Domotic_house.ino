@@ -2,8 +2,8 @@
 
 #define PIN_ESP_RX 23
 #define PIN_ESP_TX 17
-#define SSID "retenik"
-#define PASSWORD "passwordxxx"
+#define SSID "prova"
+#define PASSWORD "password"
 // ID of google script 
 #define SCRIPT_ID "AKfycbyEn0mlY0pS9oK6ebzIZ-AeAz1RUhfqbrdEi-9vO-VtpKRNj7RWS-DZXp7vOY-rOmGAsQ"
 // Google script send 11 values separated by ';' and receive 10 values because date is automatically generated

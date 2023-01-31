@@ -16,11 +16,12 @@ void IRAM_ATTR changeValueLKitchen(){
   // If interrupts come faster than 300ms, assume it's a bounce and ignore
   if (interrupt_time - last_interrupt_time > 300){
     valueLKitchen = !valueLKitchen;
-    digitalWrite(LED_KITCHEN, valueLKitchen);
-    if(valueLKitchenDB.equals("go_on") || (valueLKitchenDB.equals("off") && valueLKitchen)){
+    if(valueLKitchen){
+      digitalWrite(LED_KITCHEN, HIGH);
       setLedKitchen("on");
-    }  
-    if(valueLKitchenDB.equals("go_off") || (valueLKitchenDB.equals("on") && !valueLKitchen)){
+    }
+    else{
+      digitalWrite(LED_KITCHEN, LOW);
       setLedKitchen("off");
     }
   }
@@ -35,14 +36,16 @@ void setupLED_kitchen(){
 
 //the loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_kitchen(){
-  if(valueLKitchenDB.equals("on") && getLedKitchen().equals("off")){
+  valueLKitchenDB = getLedKitchen();
+  if(valueLKitchenDB.equals("go_on")){
     setLedKitchen("on");
-  }else if(valueLKitchenDB.equals("off") && getLedKitchen().equals("on")){
+    valueLKitchen = 1;
+  }  
+  if(valueLKitchenDB.equals("go_off")){
+    valueLKitchen = 0;
     setLedKitchen("off");
-  }else{
-    valueLKitchenDB = getLedKitchen();
   }
-  if(valueLKitchenDB.equals("go_on") || valueLKitchenDB.equals("go_off")){
-    changeValueLKitchen();
-  }
+
+  if(valueLKitchen) digitalWrite(LED_KITCHEN, HIGH);
+  else digitalWrite(LED_KITCHEN, LOW);
 }

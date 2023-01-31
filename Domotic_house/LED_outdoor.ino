@@ -24,14 +24,13 @@ void IRAM_ATTR changeValueLOutdoor(){
   if (interrupt_time - last_interrupt_time > 300){
     
     if((valueLOutdoor && valueLOutdoorDB.equals("sens_on")) || (valueLOutdoor && valueLOutdoorDB.equals("on"))){
-      valueLOutdoor = false;
       setLedOutdoor("off");
     }
   
     if((!valueLOutdoor && valueLOutdoorDB.equals("sens_off")) || (!valueLOutdoor && valueLOutdoorDB.equals("off"))){
-      valueLOutdoor = true;
       setLedOutdoor("on");
     }
+    valueLOutdoor = !valueLOutdoor;
     turnOnOffLight();
   }
   last_interrupt_time = interrupt_time;
@@ -88,6 +87,13 @@ void loopLED_outdoor() {
     valueLOutdoor=false;
     setLedOutdoor("sens_off");    
   }
+
+  if(valueLOutdoorDB.equals("on")){
+    valueLOutdoor=true;
+  }
+  else if(valueLOutdoorDB.equals("off")){
+    valueLOutdoor=false;
+  }
   
   /*  
       matching reset, when the sens output matchs the leds it reset 
@@ -96,7 +102,7 @@ void loopLED_outdoor() {
       from off to sens_off; the same if I turned up the leds when there was light,
       when the sensor output should turn up the leds it reset to sens_on
   */
-  if(valueLOutdoorDB.equals("on") && lightLevel <= 200) setLedOutdoor("sens_on");
-  if(valueLOutdoorDB.equals("off") && lightLevel > 200) setLedOutdoor("sens_off"); 
+  if(valueLOutdoorDB.equals("on") && lightLevel <= 100) setLedOutdoor("sens_on");
+  if(valueLOutdoorDB.equals("off") && lightLevel > 100) setLedOutdoor("sens_off"); 
   turnOnOffLight();
 }

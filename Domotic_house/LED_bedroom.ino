@@ -17,12 +17,12 @@ void IRAM_ATTR changeValueLBed(){
   // If interrupts come faster than 300ms, assume it's a bounce and ignore
   if (interrupt_time - last_interrupt_time > 300){
     valueLBed = !valueLBed;
-    digitalWrite(LED_BED, valueLBed);
-    if((valueLBedDB.equals("go_on")) || (valueLBedDB.equals("off") && valueLBed)){
+    if(valueLBed){
+      digitalWrite(LED_BED, HIGH);
       setLedBedroom("on");
     }
-    
-    if((valueLBedDB.equals("go_off")) || (valueLBedDB.equals("on") && !valueLBed)){
+    else{
+      digitalWrite(LED_BED, LOW);
       setLedBedroom("off");
     }
   }
@@ -37,14 +37,15 @@ void setupLED_bedroom() {
 
 //the loop controll if the input is to turn the lights on (or off) then it change the value to light_on (or light_off) 
 void loopLED_bedroom() {
-  if(valueLBedDB.equals("on") && getLedBedroom().equals("off")){
+  valueLBedDB = getLedBedroom();
+  if(valueLBedDB.equals("go_on")){
+    valueLBed = 1;
     setLedBedroom("on");
-  }else if(valueLBedDB.equals("off") && getLedBedroom().equals("on")){
+  }
+  if(valueLBedDB.equals("go_off")){
+    valueLBed = 0;
     setLedBedroom("off");
-  }else{
-    valueLBedDB = getLedBedroom();
   }
-  if (valueLBedDB.equals("go_off") || valueLBedDB.equals("go_on")){
-    changeValueLBed();
-  }
+  if(valueLBed) digitalWrite(LED_BED, HIGH);
+  else digitalWrite(LED_BED, LOW);
 }
