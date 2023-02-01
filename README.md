@@ -1,5 +1,6 @@
 # domotic-house
 Project for embedded system
+![Project main image](/img/main.jpeg)
 ## Pinout
 
 <table>
