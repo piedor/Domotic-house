@@ -1375,8 +1375,8 @@ git clone https://github.com/piedor/domotic-house.git
 Move ESP8266 library from libraries/ folder to Arduino libraries folder
 ![library example image](img/libraryimg.jpg)
 ## Members
-[Pietro Dorighi](https://github.com/piedor)
-[Nicholas Menin](https://github.com/NicholasMenin)
-[Tommaso Guidolin](https://github.com/tmaog)
+[Pietro Dorighi](https://github.com/piedor)<br/>
+[Nicholas Menin](https://github.com/NicholasMenin)<br/>
+[Tommaso Guidolin](https://github.com/tmaog)<br/>
 ## Next features
 Voice control
