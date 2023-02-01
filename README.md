@@ -78,6 +78,7 @@ Project for embedded system
    - [Adafruit_TMP006.h](https://github.com/adafruit/Adafruit_TMP006)
 
 ## Project structure
+``` bash
 Domotic_House_Project_IoT_TinyML
    |-- examples
    |   |-- esp32
@@ -1355,4 +1356,4 @@ libraries
    |   |   |   |-- ESP8266test.ino
    |   |   |-- SendReceiveDataSpreadsheetGoogle
    |   |   |   |-- SendReceiveDataSpreadsheetGoogle.ino
-
+```
