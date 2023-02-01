@@ -1364,4 +1364,4 @@ Follow circuit schematic above
 git clone https://github.com/piedor/domotic-house.git
 ```
 Move ESP8266 library from libraries/ folder to Arduino libraries folder
-![library example image](img/libraryimg.jpeg)
+![library example image](img/libraryimg.jpg)
