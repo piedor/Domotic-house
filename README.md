@@ -1375,14 +1375,14 @@ git clone https://github.com/piedor/domotic-house.git
 Move ESP8266 library from libraries/ folder to Arduino libraries folder
 ![library example image](img/libraryimg.jpg)
 ## Members
-[Pietro Dorighi](https://github.com/piedor)
-- Developed ESP8266 pilot library
-- Implemented spreadsheet communication<br/>
-[Nicholas Menin](https://github.com/NicholasMenin)
-- Management of circuit
-- Implemented physical and remote control<br/>
-[Tommaso Guidolin](https://github.com/tmaog)
-- Developed Android app
-- Implemented physical and remote control<br/>
+- [Pietro Dorighi](https://github.com/piedor)
+  - Developed ESP8266 pilot library
+  - Implemented spreadsheet communication<br/>
+- [Nicholas Menin](https://github.com/NicholasMenin)
+  - Management of circuit
+  - Implemented physical and remote control<br/>
+- [Tommaso Guidolin](https://github.com/tmaog)
+  - Developed Android app
+  - Implemented physical and remote control<br/>
 ## Next features
 Voice control
