@@ -20,13 +20,13 @@ Project for embedded system
 |0  |LedKitchen
 |22  |SCL
 |19 |ButTMinus
-|23  | ModuloWiFi
+|23  | Wifi Module RX
 |18  | 
 |5  |ButGate
 |15  |
 |2 |SensProximity
 |4    | SensProximity
-|17  | ModuloWifi
+|17  | Wifi Module TX
 |16 |ServoMot
 
 </td><td>
