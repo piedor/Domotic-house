@@ -2,8 +2,8 @@
 
 #define PIN_ESP_RX 23
 #define PIN_ESP_TX 17
-#define SSID "prova"
-#define PASSWORD "password"
+#define SSID "prova"            //wifi SSID
+#define PASSWORD "password"     //wifi password
 // ID of google script 
 #define SCRIPT_ID "AKfycbyEn0mlY0pS9oK6ebzIZ-AeAz1RUhfqbrdEi-9vO-VtpKRNj7RWS-DZXp7vOY-rOmGAsQ"
 // Google script send 11 values separated by ';' and receive 10 values because date is automatically generated
@@ -24,24 +24,25 @@
 unsigned long currentMillis;
 unsigned long lastMillis;
 
-ESP8266_01 esp;
+ESP8266_01 esp;       //
 // commands array contains the 11 values
 // Update it with getCommandsSpreadsheet function
 // Send the values to spreadsheet with sendDataSpreadsheet function
-String commands[N_COMMANDS];
-String valuesToSend = "";
-// Prevent concurrent access to commands[] variable
+String commands[N_COMMANDS];      //array where will memorize the house's values
+String valuesToSend = "";         //string to memorize which values we have to update to the spreadsheet
+// semaphore to prevent concurrent access to commands[] variable
 portMUX_TYPE commandsMux = portMUX_INITIALIZER_UNLOCKED;
-// Prevent concurrent access to valuesToSend variable
+// semaphore to prevent concurrent access to valuesToSend variable
 portMUX_TYPE valuesToSendMux = portMUX_INITIALIZER_UNLOCKED;
 
+//function to set the values in the commands array
 void setCommands(String value, int index){
   // Insert value into commands[index]
   portENTER_CRITICAL(&commandsMux);
   commands[index] = value;
   portEXIT_CRITICAL(&commandsMux);
 }
-
+//function to get the value from the commands array
 String getCommands(int index){
   // Get commands[index]
   String temp;
@@ -51,6 +52,7 @@ String getCommands(int index){
   return(temp);
 }
 
+//function to get the value of valuesToSend
 String getValuesToSend(){
   String temp;
   portENTER_CRITICAL(&valuesToSendMux);
@@ -59,6 +61,7 @@ String getValuesToSend(){
   return(temp);
 }
 
+//function to clear the commands array
 void clearArrayCommands(){
   // Set commands array to NULL values
   for(int i=0;i<N_COMMANDS;i++){
@@ -66,6 +69,7 @@ void clearArrayCommands(){
   }
 }
 
+//function to get the values from the spreadsheet
 void getCommandsSpreadsheet(){
   // Put spreadsheet values into commands array
   // A HTTP response is received, the values are after 'userHtml:' attribute
@@ -101,6 +105,7 @@ void getCommandsSpreadsheet(){
   }
 }
 
+//series of function to get the respective values
 String getLedKitchen(){
   return(getCommands(I_LED_KITCHEN));
 }
@@ -141,21 +146,8 @@ String getDate(){
   return(getCommands(I_DATE));
 }
 
-void sendDataSpreadsheet(){
-  // Send commands array values to spreadsheet
-  // esp.getSecureConnection(host, request, port, want response, want keep connection alive)
-  // Example of request when sending data to spreadsheet: script.google.com/macros/s/*SCRIPT_ID*/exec?*VARIABLE1*=*VALUE1*&*VARIABLE2*=*VALUE2*
-  String ack = esp.getSecureConnection("script.google.com", "/macros/s/" + String(SCRIPT_ID) + "/exec?LedKitchen=" + getLedKitchen() + "&LedBathroom=" + getLedBathroom()
-  + "&LedBedroom=" + getLedBedroom() + "&LedStudio=" + getLedStudio() + "&LedOutdoor=" + getLedOutdoor() + "&TSwitch=" + getThermSwitch() + "&TMode=" + getThermMode() + "&TSet=" + getThermSet()
-  + "&TempIndoor=" + getTempIndoor() + "&Gate=" + getGate(), 443, false, true);
-  if(ack.equals("OK")){
-    Serial.println("Data sent to spreadsheet");
-  }
-  else{
-    Serial.println("Error sending data to spreadsheet");
-  }
-}
-void sendDataSpreadsheet2(String valueToSend){
+//function to send the modified values to the spreadsheet
+void sendDataSpreadsheet(String valueToSend){
   // Send commands array values to spreadsheet
   // esp.getSecureConnection(host, request, port, want response, want keep connection alive)
   // Example of request when sending data to spreadsheet: script.google.com/macros/s/*SCRIPT_ID*/exec?*VARIABLE1*=*VALUE1*&*VARIABLE2*=*VALUE2*
@@ -173,6 +165,9 @@ void sendDataSpreadsheet2(String valueToSend){
   }
 }
 
+/*series of function to set the new value of the respective command
+also it update the valueToSend variable ageter checking that there aren't any left value for that parameter
+in each one we implemented a mutex to safely update the valuesToSend variable*/
 void setLedKitchen(String value){
   String temp = "LedKitchen=" + getCommands(I_LED_KITCHEN) + "&";
   portENTER_CRITICAL(&valuesToSendMux);
@@ -262,7 +257,7 @@ void setGate(String value){
   portEXIT_CRITICAL(&valuesToSendMux);
   setCommands(value, I_GATE);
 }
-
+//initialization function
 void initSpreadsheet(){
   // Set default commands to spreadsheet
   setCommands("off", I_LED_KITCHEN);
@@ -279,8 +274,8 @@ void initSpreadsheet(){
 }
 
 void setup() {
-  Serial.begin(115200);
-
+  Serial.begin(115200); //serial initialization
+  
   // Various setup
   setupLED_kitchen();
   setupLED_bathroom();
@@ -291,7 +286,7 @@ void setup() {
   setupRegulator_therm();
   
   // ESP8266 serial
-  Serial2.begin(115200, SERIAL_8N1, PIN_ESP_RX, PIN_ESP_TX);
+  Serial2.begin(115200, SERIAL_8N1, PIN_ESP_RX, PIN_ESP_TX);  //serial initialization to comunicate with wifi module
   
 
   // ESP8266_01(ESP82266 serial reference, default serial reference (for debugging), want debugging);
@@ -314,7 +309,7 @@ void setup() {
 
   lastMillis = millis();
 }
-
+//main loop
 void loop() {
   // Various loop
   loopLED_kitchen();
@@ -327,11 +322,11 @@ void loop() {
 
   // Check for commands remote timer
   currentMillis = millis();
-  if((currentMillis - lastMillis > 5000) && getValuesToSend().equals("")){
+  if((currentMillis - lastMillis > 2000) && getValuesToSend().equals("")){
     getCommandsSpreadsheet();
     lastMillis = millis();
   }
   if(!getValuesToSend().equals("")){
-    sendDataSpreadsheet2(getValuesToSend());
+    sendDataSpreadsheet(getValuesToSend());
   }
 }

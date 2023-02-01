@@ -12,11 +12,13 @@ String valueLOutdoorDB = "sens_off";
 bool valueLOutdoor = false; //tells if the light is on or off
 float lightLevel; // lux from light sensor
 
+//function to light up/down the light
 void turnOnOffLight(){
   if(valueLOutdoor) digitalWrite(LED_OUTDOOR, HIGH);
   else digitalWrite(LED_OUTDOOR, LOW);
 }
-//method called when the button is pressed
+
+//interrupt function to switch the status
 void IRAM_ATTR changeValueLOutdoor(){
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();
@@ -36,6 +38,7 @@ void IRAM_ATTR changeValueLOutdoor(){
   last_interrupt_time = interrupt_time;
 }
 
+//function to get the light sensor value
 float getLuxSensor(){
   float fLux = 0.0;
   Wire.beginTransmission(0x44);
@@ -54,6 +57,7 @@ float getLuxSensor(){
   return(fLux);
 }
 
+//function to analyze the sensor output
 float SensorOpt3001_convert(uint16_t iRawData){
   uint16_t iExponent, iMantissa;
   iMantissa = iRawData & 0x0FFF;                 // Extract Mantissa

@@ -11,6 +11,7 @@ if the value was off and viceversa.
 bool valueLStudio = 0;
 String valueLStudioDB = "off"; 
 
+//interrupt function to switch the status
 void IRAM_ATTR changeValueLStudio(){
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();

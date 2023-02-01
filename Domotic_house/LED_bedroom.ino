@@ -11,6 +11,7 @@ if the value was off and viceversa.
 bool valueLBed = 0;
 String valueLBedDB = "off";  
 
+//interrupt function to switch the status
 void IRAM_ATTR changeValueLBed(){
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();

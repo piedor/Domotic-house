@@ -4,9 +4,9 @@
 
 #include <Servo.h>
 
-#define FORWARD 0
-#define BACKWARDS 180
-#define STOP 93
+#define FORWARD 0         //definition of forward movement for servo motor
+#define BACKWARDS 180     //definition of backwards movement for servo motor
+#define STOP 93           //definition of stop for servo motor
 #define PIN_MOTOR 16
 #define BUT_GATE 5
 // Echo pin of HCSR04
@@ -34,6 +34,7 @@ volatile long ultrasonic_distance = 0;
 bool externalStopper = false;
 int countObstacle = 0;
 
+//ultrasonic 
 void IRAM_ATTR ultrasonicPulse(){
   // Sets the trigger on HIGH state for 10 micro seconds to send a series of pulses
   digitalWrite(PIN_DISTANCE_SENSOR_OUTPUT, HIGH);
@@ -81,6 +82,7 @@ void IRAM_ATTR ultrasonicEcho(){
   }
 }
 
+//interrupt timer function called when the movement timer of the servo ends
 void IRAM_ATTR endOfRunGate(){
   externalStopper = false;
   stopGate();
@@ -97,6 +99,7 @@ void IRAM_ATTR endOfRunGate(){
   }
 }
 
+//
 void IRAM_ATTR setTimersGateSensor(){
   // Reset timer gate and sensor
   timerRestart(timerGate);
@@ -124,6 +127,7 @@ void IRAM_ATTR setTimersGateSensor(){
   microsElapsedGateMoving = 0;
 }
 
+//interrupt function to change the value of the gate
 void IRAM_ATTR changeValueGate(){
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();
@@ -164,9 +168,9 @@ void IRAM_ATTR changeValueGate(){
   last_interrupt_time = interrupt_time;
 }
 
+
 void stopGate(){
-  // the new moving time will be how much time did the gate moved
-  microsElapsedGateMoving = micros() - startMicrosGateMoving; 
+  microsElapsedGateMoving = micros() - startMicrosGateMoving; // the new moving time will be how much time did the gate moved
   gateRunning = false;
   gate.write(STOP);
 }
@@ -205,8 +209,10 @@ void setupGate_control() {
   timerAlarmWrite(timerSensor, UPDATE_DISTANCE_INTERVAL, true);
 }
 
+//for each loop 
 void loopGate_control() {
   if(!gateRunning){
+    //descalimer for late data input
     if(valueGate.equals("open") && getGate().equals("opening")){
       setGate("open");
     }
@@ -216,11 +222,12 @@ void loopGate_control() {
     else{
       valueGateDB = getGate();
     }
+
+    //if the command from the spreadsheet is to open/close the gate we call the interrupt function to activate the servo
     if(valueGateDB.equals("opening"))
     {
       changeValueGate();
     }
-    
     if(valueGateDB.equals("closing"))
     {
       changeValueGate();

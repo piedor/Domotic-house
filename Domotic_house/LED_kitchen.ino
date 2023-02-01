@@ -10,6 +10,7 @@ if the value was off and viceversa.
 bool valueLKitchen = 0;
 String valueLKitchenDB = "off"; 
 
+//interrupt function to switch the status
 void IRAM_ATTR changeValueLKitchen(){
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();
