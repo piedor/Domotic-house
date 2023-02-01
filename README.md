@@ -6,10 +6,10 @@ Project for embedded system
 - [Requirements](#requirements)
   - [Hardware requirements](#hardware-requirements)
   - [Software requirements](#software-requirements)
-- [Project structure](#project-structure)
 - [Getting started](#getting-started)
 - [Members](#members)
 - [Next features](#next-features)
+- [Project structure](#project-structure)
 ## Pinout
 
 <table>
@@ -85,7 +85,44 @@ Project for embedded system
    - Wire.h library (i2c protocol)
    - [LiquidCrystal_I2C.h](https://github.com/johnrickman/LiquidCrystal_I2C) library
    - [Adafruit_TMP006.h](https://github.com/adafruit/Adafruit_TMP006)
+   
+## Getting started
+Follow circuit schematic above
+``` bash
+# Clone repository
+git clone https://github.com/piedor/domotic-house.git
+```
+Move ESP8266 library from libraries/ folder to Arduino libraries folder
+![library example image](img/libraryimg.jpg)
+Install others Arduino libraries above <br/>
+Create a Google Spreadsheet like this, **remember** the Google sheet ID
+![spreadsheet example image](img/Spreadsheetimg.JPG)
+Create a Google script connected to your spreadsheet and copy [this script](https://github.com/piedor/domotic-house/tree/main/script_google/getPushDataSpreadsheet.gs) <br/>
+Change SHEET_ID with your
+![spreadsheet example image](img/scriptimg.JPG)
+Click on new deployment and check for type: web application, exec as: me, user authorize: everyone
+![deployment example image](img/deploymentimg.jpg)
+**Remember** the script ID
+![scriptid example image](img/scriptidimg.jpg)
+Domotic-house/ folder contains Arduino file <br/>
+Open Domotic_house arduino file <br/>
+Change ssid and password with your wifi credentials, change SCRIPT_ID with your <br/>
+Upload code!
+![arduino code example image](img/arduinocodeimg.JPG)
+Install [Domotic_house_app.apk](https://github.com/piedor/domotic-house/tree/main/android%20app/Domotic_House/Domotic_house_app.apk) on your Android device
 
+## Members
+- [Pietro Dorighi](https://github.com/piedor)
+  - Developed ESP8266 pilot library
+  - Implemented spreadsheet communication<br/>
+- [Nicholas Menin](https://github.com/NicholasMenin)
+  - Management of circuit
+  - Implemented physical and remote control<br/>
+- [Tommaso Guidolin](https://github.com/tmaog)
+  - Developed Android app
+  - Implemented physical and remote control<br/>
+## Next features
+Voice control
 ## Project structure
 ``` bash
 Domotic_House_Project_IoT_TinyML
@@ -1366,40 +1403,3 @@ libraries
    |   |   |-- SendReceiveDataSpreadsheetGoogle
    |   |   |   |-- SendReceiveDataSpreadsheetGoogle.ino
 ```
-## Getting started
-Follow circuit schematic above
-``` bash
-# Clone repository
-git clone https://github.com/piedor/domotic-house.git
-```
-Move ESP8266 library from libraries/ folder to Arduino libraries folder
-![library example image](img/libraryimg.jpg)
-Install others Arduino libraries above <br/>
-Create a Google Spreadsheet like this, **remember** the Google sheet ID
-![spreadsheet example image](img/Spreadsheetimg.JPG)
-Create a Google script connected to your spreadsheet and copy [this script](https://github.com/piedor/domotic-house/tree/main/script_google/getPushDataSpreadsheet.gs) <br/>
-Change SHEET_ID with your
-![spreadsheet example image](img/scriptimg.JPG)
-Click on new deployment and check for type: web application, exec as: me, user authorize: everyone
-![deployment example image](img/deploymentimg.jpg)
-**Remember** the script ID
-![scriptid example image](img/scriptidimg.jpg)
-Domotic-house/ folder contains Arduino file <br/>
-Open Domotic_house arduino file <br/>
-Change ssid and password with your wifi credentials, change SCRIPT_ID with your <br/>
-Upload code!
-![arduino code example image](img/arduinocodeimg.JPG)
-Install [Domotic_house_app.apk](https://github.com/piedor/domotic-house/tree/main/android%20app/Domotic_House/Domotic_house_app.apk) on your Android device
-
-## Members
-- [Pietro Dorighi](https://github.com/piedor)
-  - Developed ESP8266 pilot library
-  - Implemented spreadsheet communication<br/>
-- [Nicholas Menin](https://github.com/NicholasMenin)
-  - Management of circuit
-  - Implemented physical and remote control<br/>
-- [Tommaso Guidolin](https://github.com/tmaog)
-  - Developed Android app
-  - Implemented physical and remote control<br/>
-## Next features
-Voice control
