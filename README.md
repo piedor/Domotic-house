@@ -8,6 +8,8 @@ Project for embedded system
   - [Software requirements](#software-requirements)
 - [Project structure](#project-structure)
 - [Getting started](#getting-started)
+- [Members](#members)
+- [Next features](#next-features)
 ## Pinout
 
 <table>
@@ -1372,3 +1374,9 @@ git clone https://github.com/piedor/domotic-house.git
 ```
 Move ESP8266 library from libraries/ folder to Arduino libraries folder
 ![library example image](img/libraryimg.jpg)
+## Members
+[Pietro Dorighi](https://github.com/piedor)
+[Nicholas Menin](https://github.com/NicholasMenin)
+[Tommaso Guidolin](https://github.com/tmaog)
+## Next features
+Voice control
