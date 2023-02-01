@@ -3,6 +3,7 @@
 ## Section links
 - [Description](#description)
 - [Pinout](#pinout)
+- [Circuit Scheme](#circuit-scheme)
 - [Requirements](#requirements)
   - [Hardware requirements](#hardware-requirements)
   - [Software requirements](#software-requirements)
@@ -68,6 +69,8 @@ Remote management is handled by the board with the ESP8266 wifi module, which al
 
 </td></tr> </table>
 
+## Circuit scheme
+![circuit image](img/circuitimg.jpg)
 ## Requirements
 ### Hardware requirements
 - Heltec Lora 32 V2
