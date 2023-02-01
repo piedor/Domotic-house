@@ -1376,7 +1376,13 @@ Move ESP8266 library from libraries/ folder to Arduino libraries folder
 ![library example image](img/libraryimg.jpg)
 ## Members
 [Pietro Dorighi](https://github.com/piedor)<br/>
+- Developed ESP8266 pilot library
+- Implemented spreadsheet communication 
 [Nicholas Menin](https://github.com/NicholasMenin)<br/>
+- Management of circuit
+- Implemented physical and remote control
 [Tommaso Guidolin](https://github.com/tmaog)<br/>
+- Developed Android app
+- Implemented physical and remote control
 ## Next features
 Voice control
