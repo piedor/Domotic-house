@@ -1,6 +1,13 @@
 # domotic-house
 Project for embedded system
 ![Project main image](/img/main.jpeg)
+## Section links
+- [Pinout](#pinout)
+- [Requirements](#requirements)
+  - [Hardware requirements](#hardware-requirements)
+  - [Software requirements](#software-requirements)
+- [Project structure](#project-structure)
+- [Getting started](#getting-started)
 ## Pinout
 
 <table>
