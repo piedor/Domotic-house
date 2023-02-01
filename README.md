@@ -71,7 +71,7 @@ Project for embedded system
 1. Android Studio IDE
    - Volley library (request from website)
 2. Arduino IDE
-   - [ESP8266 - 01 library](https://github.com/piedor/ESP8266-01-generic-AT-library) library (pilot ESP8266 with AT commands)
+   - [ESP8266 - 01 library](libraries/ESP8266-01-generic-AT-library) library (pilot ESP8266 with AT commands)
    - Servo.h library
    - Wire.h library (i2c protocol)
    - [LiquidCrystal_I2C.h](https://github.com/johnrickman/LiquidCrystal_I2C) library
