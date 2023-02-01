@@ -1374,6 +1374,9 @@ git clone https://github.com/piedor/domotic-house.git
 ```
 Move ESP8266 library from libraries/ folder to Arduino libraries folder
 ![library example image](img/libraryimg.jpg)
+Domotic-house/ folder contains Arduino file 
+Install [Domotic_house_app.apk](https://github.com/piedor/domotic-house/tree/main/android%20app/Domotic_House/Domotic_house_app.apk) on your Android device
+
 ## Members
 - [Pietro Dorighi](https://github.com/piedor)
   - Developed ESP8266 pilot library
