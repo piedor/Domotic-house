@@ -1377,9 +1377,11 @@ Move ESP8266 library from libraries/ folder to Arduino libraries folder
 Install others Arduino libraries above <br/>
 Create a Google Spreadsheet like this, **remember** the Google sheet ID
 ![spreadsheet example image](img/Spreadsheetimg.JPG)
-Create a Google script connected to your spreadsheet and copy ![this script](https://github.com/piedor/domotic-house/tree/main/script_google/getPushDataSpreadsheet.gs) <br/>
+Create a Google script connected to your spreadsheet and copy [this script](https://github.com/piedor/domotic-house/tree/main/script_google/getPushDataSpreadsheet.gs) <br/>
 Change SHEET_ID with your
 ![spreadsheet example image](img/scriptimg.JPG)
+Click on new deployment and check for type: web application, exec as: me, user authorize: everyone
+![deployment example image](img/deploymentimg.JPG)
 Domotic-house/ folder contains Arduino file <br/>
 Install [Domotic_house_app.apk](https://github.com/piedor/domotic-house/tree/main/android%20app/Domotic_House/Domotic_house_app.apk) on your Android device
 
