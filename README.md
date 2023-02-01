@@ -1357,3 +1357,6 @@ libraries
    |   |   |-- SendReceiveDataSpreadsheetGoogle
    |   |   |   |-- SendReceiveDataSpreadsheetGoogle.ino
 ```
+## Getting started
+Follow circuit schematic above
+
