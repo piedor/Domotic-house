@@ -1,4 +1,4 @@
-# domotic-house
+# Domotic House
 ![Project main image](/img/main.jpeg)
 ## Section links
 - [Description](#description)
