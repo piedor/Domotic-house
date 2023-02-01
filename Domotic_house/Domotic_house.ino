@@ -327,7 +327,7 @@ void loop() {
 
   // Check for commands remote timer
   currentMillis = millis();
-  if((currentMillis - lastMillis > 1000) && getValuesToSend().equals("")){
+  if((currentMillis - lastMillis > 5000) && getValuesToSend().equals("")){
     getCommandsSpreadsheet();
     lastMillis = millis();
   }

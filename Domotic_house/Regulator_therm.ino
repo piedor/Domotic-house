@@ -141,13 +141,7 @@ void therm_level(){
 }
 
 void lcdShow(){
-  if(valueTSwitchDB.equals("off")){
-    lcd.clear();
-    lcd.setCursor(0, 0);    //Funzione per decidere dove mettere il cursore (carattere(da 0 a 15), riga(0 o 1))
-    lcd.print("TEMP: ");  
-    lcd.setCursor(5,0);   //L'idea sarebbe mettere su 6 invece che 5, ma non so come far mostrare un solo numero dopo la virgola, quindi per il momento lascio così
-    lcd.print(String(valueTempIndoor));
-  }else{
+  if(valueTSwitchDB.equals("on")){
     int x;
     lcd.setCursor(0, 0);
     lcd.print("TEMP:      POWER");
@@ -162,7 +156,12 @@ void lcdShow(){
     else x = 2;
     lcd.setCursor(12, 1);
     switch (powerLevel){
-      case (0):{  lcd.print("    ");}
+      case (0):{  if(x==1) {
+                      lcd.print(" W  ");
+                    }else{
+                      lcd.print(" C  ");
+                    }
+      }
       case (1):{  lcd.write(x);
                   lcd.print("  ");}
       case (2):{  lcd.write(x);
@@ -174,6 +173,12 @@ void lcdShow(){
                   }
       default: break;
     }
+  }else{
+    lcd.clear();
+    lcd.setCursor(0, 0);    //Funzione per decidere dove mettere il cursore (carattere(da 0 a 15), riga(0 o 1))
+    lcd.print("TEMP: ");  
+    lcd.setCursor(5,0);   //L'idea sarebbe mettere su 6 invece che 5, ma non so come far mostrare un solo numero dopo la virgola, quindi per il momento lascio così
+    lcd.print(String(valueTempIndoor));
   }
 }
 
@@ -216,7 +221,7 @@ void loopRegulator_therm() {          // read the value of of the therm status
   }
   valueTempIndoor = getTempIndoor();
   if(!valueTModeDB.equals(getThermMode())){
-    changeValueTMode();
+    valueTModeDB = getThermMode();
   }
 
   therm_level();
