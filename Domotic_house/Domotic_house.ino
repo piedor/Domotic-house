@@ -2,10 +2,10 @@
 
 #define PIN_ESP_RX 23
 #define PIN_ESP_TX 17
-#define SSID "prova"            //wifi SSID
+#define SSID "ssid"            //wifi SSID
 #define PASSWORD "password"     //wifi password
 // ID of google script 
-#define SCRIPT_ID "AKfycbyEn0mlY0pS9oK6ebzIZ-AeAz1RUhfqbrdEi-9vO-VtpKRNj7RWS-DZXp7vOY-rOmGAsQ"
+#define SCRIPT_ID "SCRIPT_ID"
 // Google script send 11 values separated by ';' and receive 10 values because date is automatically generated
 #define N_COMMANDS 11
 // Indexes for commands array

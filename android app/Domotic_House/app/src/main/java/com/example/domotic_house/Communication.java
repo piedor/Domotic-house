@@ -21,7 +21,7 @@ public class Communication{
     public static long receivingTimer=3000;     //timer that describe everywhen the data is received
     public static CountDownTimer countDownTimer=null;
 
-    public final static String URL="https://script.google.com/macros/s/AKfycbz-0gfKtjsy1Mwprqw5qpktu6foRjabFs5L2ShmwupzjlUgDJAoZgZRII4dE7Pqm54pgQ/exec"+"?";
+    public final static String URL="https://script.google.com/macros/s/SCRIPT_ID/exec"+"?";
 
     protected static int lastData = 0; //variable that is setted with the last value of the length of the spreadsheet (column)
     public static Lights LMaster = new Lights();
