@@ -1359,4 +1359,7 @@ libraries
 ```
 ## Getting started
 Follow circuit schematic above
-
+``` bash
+# Clone repository
+git clone https://github.com/piedor/domotic-house.git
+```
