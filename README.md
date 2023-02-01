@@ -1386,7 +1386,7 @@ Click on new deployment and check for type: web application, exec as: me, user a
 ![scriptid example image](img/scriptidimg.jpg)
 Domotic-house/ folder contains Arduino file <br/>
 Open Domotic_house arduino file <br/>
-Change ssid and password with your wifi credentials, change SCRIPT_ID with your
+Change ssid and password with your wifi credentials, change SCRIPT_ID with your <br/>
 Upload code!
 ![arduino code example image](img/arduinocodeimg.JPG)
 Install [Domotic_house_app.apk](https://github.com/piedor/domotic-house/tree/main/android%20app/Domotic_House/Domotic_house_app.apk) on your Android device
