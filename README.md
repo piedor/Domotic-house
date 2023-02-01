@@ -1381,7 +1381,7 @@ Create a Google script connected to your spreadsheet and copy [this script](http
 Change SHEET_ID with your
 ![spreadsheet example image](img/scriptimg.JPG)
 Click on new deployment and check for type: web application, exec as: me, user authorize: everyone
-![deployment example image](img/deploymentimg.JPG)
+![deployment example image](img/deploymentimg.jpg)
 Domotic-house/ folder contains Arduino file <br/>
 Install [Domotic_house_app.apk](https://github.com/piedor/domotic-house/tree/main/android%20app/Domotic_House/Domotic_house_app.apk) on your Android device
 
