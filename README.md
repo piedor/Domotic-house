@@ -133,7 +133,8 @@ Install [Domotic_house_app.apk](https://github.com/piedor/domotic-house/tree/mai
   - Developed Android app
   - Implemented physical and remote control<br/>
 ## Next features
-Voice control
+Voice control <br/>
+OTA updates
 ## Project structure
 ``` bash
 Domotic_House_Project_IoT_TinyML
