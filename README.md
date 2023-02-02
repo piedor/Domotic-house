@@ -3,6 +3,7 @@
 ## Section links
 - [Description](#description)
 - [Presentation](#presentation)
+- [Video](#video)
 - [Pinout](#pinout)
 - [Circuit Scheme](#circuit-scheme)
 - [Requirements](#requirements)
@@ -17,6 +18,8 @@ This project was built with the intention of replicating all the notions acquire
 This model is a replica of a home automation home that includes both physical and remote management, our aim being to implement extensive control over the most frequently used things in a home in a single embedded system.
 Many functionalities of a microcontroller have been used: pwm, i2c protocol, serial communication, digital write, digital read and task management as in a modern rtos using physical interrupts, timer interrupts etc...
 Remote management is handled by the board with the ESP8266 wifi module, which alongside a google spreadsheet receives and sends commands for control from a smartphone.
+## Video 
+[Link video](https://youtu.be/1XRFI-zmJy4)
 ## Presentation
 [Link PPT](https://docs.google.com/presentation/d/1j2j_QFn3nK8z8jsI3YzmSr5QvS2KY89qo4PIgyJSXWE/edit?usp=sharing)
 ## Pinout
