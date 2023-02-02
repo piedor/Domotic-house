@@ -2,8 +2,8 @@
 ![Project main image](/img/main.jpeg)
 ## Section links
 - [Description](#description)
-- [Presentation](#presentation)
 - [Video](#video)
+- [Presentation](#presentation)
 - [Pinout](#pinout)
 - [Circuit Scheme](#circuit-scheme)
 - [Requirements](#requirements)
