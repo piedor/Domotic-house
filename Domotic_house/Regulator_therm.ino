@@ -78,7 +78,7 @@ void IRAM_ATTR changeValueTUp(){
   unsigned long interrupt_time = millis();
   // If interrupts come faster than 300ms, assume it's a bounce and ignore
   if (interrupt_time - last_interrupt_time > 300){
-    valueTSetDB += 1;
+    valueTSetDB += 0.5;
     lastTSetChange = millis();
     tSetChange = true;
   }

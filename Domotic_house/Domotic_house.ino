@@ -146,6 +146,21 @@ String getDate(){
   return(getCommands(I_DATE));
 }
 
+void sendDataSpreadsheet2(){
+  // Send commands array values to spreadsheet
+  // esp.getSecureConnection(host, request, port, want response, want keep connection alive)
+  // Example of request when sending data to spreadsheet: script.google.com/macros/s/*SCRIPT_ID*/exec?*VARIABLE1*=*VALUE1*&*VARIABLE2*=*VALUE2*
+  String ack = esp.getSecureConnection("script.google.com", "/macros/s/" + String(SCRIPT_ID) + "/exec?LedKitchen=" + getLedKitchen() + "&LedBathroom=" + getLedBathroom()
+  + "&LedBedroom=" + getLedBedroom() + "&LedStudio=" + getLedStudio() + "&LedOutdoor=" + getLedOutdoor() + "&TSwitch=" + getThermSwitch() + "&TMode=" + getThermMode() + "&TSet=" + getThermSet()
+  + "&TempIndoor=" + getTempIndoor() + "&Gate=" + getGate(), 443, false, true);
+  if(ack.equals("OK")){
+    Serial.println("Data sent to spreadsheet");
+  }
+  else{
+    Serial.println("Error sending data to spreadsheet");
+  }
+}
+
 //function to send the modified values to the spreadsheet
 void sendDataSpreadsheet(String valueToSend){
   // Send commands array values to spreadsheet
@@ -270,7 +285,7 @@ void initSpreadsheet(){
   setCommands("warm", I_T_MODE);
   setCommands(String(getTempIndoor()), I_TEMP_INDOOR);
   setCommands("close", I_GATE);
-  sendDataSpreadsheet();
+  sendDataSpreadsheet2();
 }
 
 void setup() {
